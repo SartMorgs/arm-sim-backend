@@ -24,3 +24,13 @@ func TestbuildBinValue(t *testing.T){
 		t.Errorf("builBinValue \n got: %v \n want: \n%v", got, want)
 	}
 }
+
+func TestSetName(t *testing.T){
+	want := "NAME1"
+	reg.SetName("NAME1")
+	got := reg.GetName()
+
+	if got != want{
+		t.Errorf("SetName \n got: %v \n want: \n%v", got, want)
+	}
+}

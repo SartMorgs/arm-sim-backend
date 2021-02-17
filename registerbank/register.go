@@ -5,6 +5,7 @@ import "strconv"
 type Register struct {
 	Value int
 	BinValue string
+	Name string
 }
 
 func (r *Register) GetValue() int{
@@ -21,6 +22,14 @@ func (r *Register) GetBinValue() string{
 
 func (r *Register) SetBinValue(bin_value string) {
 	r.BinValue = bin_value
+}
+
+func (r *Register) SetName(name string){
+	r.Name = name
+}
+
+func (r *Register) GetName() string{
+	return r.Name
 }
 
 func (r *Register) buildBinValue() {
