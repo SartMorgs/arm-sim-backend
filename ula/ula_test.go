@@ -53,3 +53,16 @@ func TestSub(t *testing.T){
 		t.Errorf("Sub \n got: %v \n want %v \n", got, want)
 	}
 }
+
+func TestMult(t *testing.T){
+	want := 100
+
+	ula1.SetValue1(20)
+	ula1.SetValue2(5)
+
+	got := ula1.Mult()
+
+	if got != want{
+		t.Errorf("Mult \n got: %v \n want %v \n", got, want)
+	}
+}

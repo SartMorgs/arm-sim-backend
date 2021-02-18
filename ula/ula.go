@@ -1,33 +1,38 @@
 package ula
  
 type Ula struct {
-	Value1 int
-	Value2 int
-	Result int
+	value1 int
+	value2 int
+	result int
 }
 
 func (u *Ula) GetValue1() int{
-	return u.Value1
+	return u.value1
 }
 
 func (u *Ula) GetValue2() int{
-	return u.Value2
+	return u.value2
 }
 
-func (u *Ula) SetValue1(value1 int){
-	u.Value1 = value1
+func (u *Ula) SetValue1(val1 int){
+	u.value1 = val1
 }
 
-func (u *Ula) SetValue2(value2 int){
-	u.Value2 = value2
+func (u *Ula) SetValue2(val2 int){
+	u.value2 = val2
 }
 
 func (u *Ula) Add() int{
-	u.Result = u.Value1 + u.Value2
-	return u.Result
+	u.result = u.value1 + u.value2
+	return u.result
 }
 
 func (u *Ula) Sub() int{
-	u.Result = u.Value1 - u.Value2
-	return u.Result
+	u.result = u.value1 - u.value2
+	return u.result
+}
+
+func (u *Ula) Mult() int{
+	u.result = u.value1 * u.value2 
+	return u.result
 }
