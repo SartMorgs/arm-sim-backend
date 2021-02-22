@@ -3,45 +3,49 @@ package registerbank
 import "strconv"
 
 type Register struct {
-	value int
+	decValue int
+	hexValue string
 	binValue string
-	name string
+	registerName string
+	registerFunction string
 }
 
-func (r *Register) GetValue() int{
-	return r.value
+func (r *Register) SetValue(value int){
+	r.decValue = value
 }
 
-func (r *Register) SetValue(val int){
-	r.value = val
+func (r *Register) SetRegisterName(name string){
+	r.registerName = name
+}
+
+func (r *Register) SetRegisterFunction(function string){
+	r.registerFunction = function
+}
+
+func (r *Register) GetDecValue() int{
+	return r.decValue
 }
 
 func (r *Register) GetBinValue() string{
 	return r.binValue
 }
 
-func (r *Register) SetBinValue(bin_value string) {
-	r.binValue = bin_value
+func (r *Register) GetHexValue() string{
+	return r.hexValue
 }
 
-func (r *Register) SetName(nm string){
-	r.name = nm
+func (r *Register) GetRegisterName() string{
+	return r.registerName
 }
 
-func (r *Register) GetName() string{
-	return r.name
+func (r *Register) GetRegisterFunction() string{
+	return r.registerFunction
 }
 
-func (r *Register) buildBinValue() {
-	var value_iteraction int = r.value
-	var mod_value int = 0
-	var binVal string
+func (r *Register) toBinValue() {
+	r.binValue = strconv.FormatInt(int64(r.decValue), 2)
+}
 
-	for ok:= true; ok; ok = value_iteraction > 0 {
-		mod_value = value_iteraction % 2
-		binVal = binVal + strconv.Itoa(mod_value)
-		value_iteraction = value_iteraction / 2
-	}
-
-	r.SetBinValue(binVal)
+func (r *Register) toHexValue(){
+	r.hexValue = "0x" + strconv.FormatInt(int64(r.decValue), 16)
 }
