@@ -35,3 +35,18 @@ func TestToBinValue(t *testing.T){
 		t.Errorf("toBinValue \n got: %v \n want %v \n", got, want)
 	}
 }
+
+func TestGePointerPC(t *testing.T)(){
+	want := 75
+	pc.ResetPC()
+
+	for i := 0; i < 75; i++{
+		pc.nextPointer()
+	}
+
+	got := pc.GetPointerPC()
+
+	if want != got{
+		t.Errorf("GetPointerPC \n got: %v \n want %v \n", got, want)
+	}
+}

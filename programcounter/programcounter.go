@@ -5,6 +5,7 @@ import(
 )
 
 type ProgramCounter struct{
+	currentPointer int
 	decAddressMemmory int
 	hexAddressMemmory string
 	binAddressMemmory string
@@ -26,10 +27,22 @@ func (pc *ProgramCounter) GetBinAddressMemmory() string{
 	return pc.binAddressMemmory
 }
 
+func (pc *ProgramCounter) GetPointerPC() int{
+	return pc.currentPointer
+}
+
 func (pc *ProgramCounter) toHexAddress(){
 	pc.hexAddressMemmory = "0x" + strconv.FormatInt(int64(pc.decAddressMemmory), 16)
 }
 
 func (pc *ProgramCounter) toBinAddress(){
 	pc.binAddressMemmory = strconv.FormatInt(int64(pc.decAddressMemmory), 2)
+}
+
+func (pc *ProgramCounter) ResetPC(){
+	pc.currentPointer = 0;
+}
+
+func (pc *ProgramCounter) nextPointer(){
+	pc.currentPointer += 1
 }
