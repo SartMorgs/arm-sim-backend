@@ -4,12 +4,12 @@ import "testing"
 
 var ula1 Ula
 
+// Unit Tests
+// Test all methods using mock
 func TestSetValue1 (t *testing.T){
 	want := 20
-
 	ula1.SetValue1(20)
-
-	got := ula1.GetValue1()
+	got := ula1.value1
 
 	if got != want{
 		t.Errorf("SetValue1 \n got: %v \n want %v \n", got, want)
@@ -18,21 +18,39 @@ func TestSetValue1 (t *testing.T){
 
 func TestSetValue2 (t *testing.T){
 	want := 5
-
 	ula1.SetValue2(5)
-
-	got := ula1.GetValue2()
+	got := ula1.value2
 
 	if got != want{
 		t.Errorf("SetValue2 \n got: %v \n want %v \n", got, want)
 	}
 }
 
+func TestGetValue1 (t *testing.T){
+	want := 20
+	ula1.value1 = 20
+	got := ula1.GetValue1()
+
+	if got != want{
+		t.Errorf("GetValue1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetValue2 (t *testing.T){
+	want := 20
+	ula1.value2 = 20
+	got := ula1.GetValue2()
+
+	if got != want{
+		t.Errorf("GetValue2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
 func TestAdd (t *testing.T) {
 	want := 25
 
-	ula1.SetValue1(20)
-	ula1.SetValue2(5)
+	ula1.value1 = 20
+	ula1.value2 = 5
 
 	got := ula1.Add()
 
@@ -44,8 +62,8 @@ func TestAdd (t *testing.T) {
 func TestSub(t *testing.T){
 	want := 15
 
-	ula1.SetValue1(20)
-	ula1.SetValue2(5)
+	ula1.value1 = 20
+	ula1.value2 = 5
 
 	got := ula1.Sub()
 
@@ -57,9 +75,9 @@ func TestSub(t *testing.T){
 func TestMult(t *testing.T){
 	want := 100
 
-	ula1.SetValue1(20)
-	ula1.SetValue2(5)
-
+	ula1.value1 = 20
+	ula1.value2 = 5
+	
 	got := ula1.Mult()
 
 	if got != want{
