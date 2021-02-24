@@ -6,16 +6,6 @@ var dcun DecodeUnit
 
 // Unit Tests
 // Test all methods using mock
-func TestGetOpcodeSize(t* testing.T){
-	want := 6
-	dcun.SetInstruction("1111110000000000000000000000000000")
-	got := len(dcun.opcode)
-
-	if want != got{
-		t.Errorf("Size return GetOpcode \n got: %v \n want %v \n", got, want)
-	}
-}
-
 func TestGetOpcode(t *testing.T){
 	want := "111111"
 	dcun.opcode = "111111"
@@ -26,8 +16,19 @@ func TestGetOpcode(t *testing.T){
 	}
 }
 
-func TestMapInstruction(t *testing. T){
-	
+func TestMapInstructionArithmetic(t *testing. T){
+	want := "Arithmetic"
+	dcun.instruction = "10111001010100001010100001011010"
+	dcun.instructionMap = map[string]string{
+		"101110": "Arithmetic",
+		"100011": "Comparison",
+		"000100": "Bypass",
+	}
+	got := dcun.MapInstruction()
+
+	if got != want{
+		t.Errorf("MapInstruction for group1 \n got: %v \n want %v \n", got, want)
+	}
 }
 
 /*

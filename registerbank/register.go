@@ -10,6 +10,17 @@ type Register struct {
 	registerFunction string
 }
 
+func NewRegister(dcval int, hxval string, bnval string, rgnm string, rgfc string) (*Register, error){
+	register := Register{
+		decValue: dcval,
+		hexValue: hxval,
+		binValue: bnval,
+		registerName: rgnm,
+		registerFunction: rgfc}
+
+	return &register, nil
+}
+
 func (r *Register) SetValue(value int){
 	r.decValue = value
 }

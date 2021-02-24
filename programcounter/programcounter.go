@@ -11,6 +11,16 @@ type ProgramCounter struct{
 	binAddressMemmory string
 }
 
+func NewProgramCounter(currptr int, dcaddmem int, hxaddmem string, bnaddmem string) (*ProgramCounter, error){
+	programcounter := ProgramCounter{
+		currentPointer: currptr,
+		decAddressMemmory: dcaddmem,
+		hexAddressMemmory: hxaddmem,
+		binAddressMemmory: bnaddmem}
+
+	return &programcounter, nil
+}
+
 func (pc *ProgramCounter) SetAddressMemmory(addr int){
 	pc.decAddressMemmory = addr
 }
