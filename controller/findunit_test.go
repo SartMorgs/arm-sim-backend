@@ -26,16 +26,6 @@ func TestSetProgramArea(t *testing.T){
 	}
 }
 
-func TestSetMemmoryAddress(t *testing.T){
-	want := 77
-	fdun.SetMemmoryAddress(77)
-	got := fdun.memmoryAddress
-
-	if want != got{
-		t.Errorf("SetMemmoryAddress \n got: %v \n want %v \n", got, want)
-	}
-}
-
 func TestGetInstruction(t *testing.T){
 	want := "000001"
 	fdun.instruction = "000001"
@@ -53,15 +43,5 @@ func TestGetProgramArea(t *testing.T){
 
 	if got != want{
 		t.Errorf("GetProgramArea \n got %v \n want %v \n", got, want)
-	}
-}
-
-func TestGetMemmoryAddress(t *testing.T){
-	want := 77
-	fdun.memmoryAddress = 77
-	got := fdun.GetMemmoryAddress()
-
-	if got != want{
-		t.Errorf("GetMemmoryAddress \n got: %v \n want %v \n", got, want)
 	}
 }

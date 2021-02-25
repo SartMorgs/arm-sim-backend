@@ -18,7 +18,7 @@ func TestGetOpcode(t *testing.T){
 
 func TestMapInstructionArithmetic(t *testing. T){
 	want := "Arithmetic"
-	dcun.instruction = "10111001010100001010100001011010"
+	dcun.instructionCode = "10111001010100001010100001011010"
 	dcun.instructionMap = map[string]string{
 		"101110": "Arithmetic",
 		"100011": "Comparison",
@@ -31,16 +31,43 @@ func TestMapInstructionArithmetic(t *testing. T){
 	}
 }
 
-/*
-func TestSplitInstruction(t *testing.T){
+func TestSplitInstructionArithmetic(t *testing.T){
 	// Instrução aritméticas e lógicas
 	// Primeiro caso de teste
-	want_opcode1 		:= "101110"
+	want_opcode			:= "101110"
 	want_reg1 			:= "01010"
 	want_reg2 			:= "10000"
 	want_regm			:= "10101"
-	dcun.instruction 	= "10111001010100001010100001011010"
 
+	dcun.instructionCode = "10111001010100001010100001011010"
+	dcun.instructionType = "Arithmetic"
+	dcun.SplitInstruction()
+
+	got_opcode := dcun.opcode
+	got_reg1 := dcun.instructionFormat["reg1"]
+	got_reg2 := dcun.instructionFormat["reg2"]
+	got_regm := dcun.instructionFormat["regm"]
+
+	if 	got_opcode != want_opcode || got_reg1 != want_reg1 || 
+		got_reg2 != want_reg2 || got_regm != want_regm{
+			t.Errorf(`
+SplitInstruction for arithmetic instruction
+got_opcode: %v
+want_opcode %v
+
+got_reg1: %v 
+want_reg1 %v
+
+got_reg2: %v
+want_reg2 %v
+
+got_regm: %v
+want_regm %v`, got_opcode, want_opcode, got_reg1, 
+			want_reg1, got_reg2, want_reg2, got_regm, want_regm)
+	}
+}
+
+	/*
 	//	Segundo caso de teste
 	want_opcode1 		= "101110"
 	want_regd 			:= "01010"
@@ -69,6 +96,5 @@ func TestSplitInstruction(t *testing.T){
 	// Segundo caso de teste
 	want_opcode1 		= "101110"
 	dcun.instruction 	= "10111000000000010000000000000001"
-
 }
 */
