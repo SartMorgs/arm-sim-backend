@@ -50,20 +50,8 @@ func TestSplitInstructionArithmetic(t *testing.T){
 
 	if 	got_opcode != want_opcode || got_reg1 != want_reg1 || 
 		got_reg2 != want_reg2 || got_regm != want_regm{
-			t.Errorf(`
-SplitInstruction for arithmetic instruction
-got_opcode: %v
-want_opcode %v
-
-got_reg1: %v 
-want_reg1 %v
-
-got_reg2: %v
-want_reg2 %v
-
-got_regm: %v
-want_regm %v`, got_opcode, want_opcode, got_reg1, 
-			want_reg1, got_reg2, want_reg2, got_regm, want_regm)
+			t.Errorf("SplitInstruction for arithmetic instruction \n got_opcode: %v \n want_opcode %v \n got_reg1: %v \n want_reg1 %v \n got_reg2: %v \n want_reg2 %v \n got_regm: %v \n want_regm %v", 
+					got_opcode, want_opcode, got_reg1, want_reg1, got_reg2, want_reg2, got_regm, want_regm)
 	}
 }
 
