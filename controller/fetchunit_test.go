@@ -2,14 +2,14 @@ package controller
 
 import "testing"
 
-var fdun FindUnit 
+var ftun FetchUnit 
 
 // Unit Tests
 // Test all methods using mock
 func TestSetInstruction(t *testing.T){
 	want := "000001"
-	fdun.SetInstruction("000001")
-	got := fdun.instruction
+	ftun.SetInstruction("000001")
+	got := ftun.instruction
 
 	if want != got{
 		t.Errorf("SetInstruction \n got: %v want %v \n", got, want)
@@ -18,8 +18,8 @@ func TestSetInstruction(t *testing.T){
 
 func TestSetProgramArea(t *testing.T){
 	want := "func-a"
-	fdun.SetProgramArea("func-a")
-	got := fdun.programArea
+	ftun.SetProgramArea("func-a")
+	got := ftun.programArea
 
 	if want != got{
 		t.Errorf("SetProgramArea \n got: %v \n want %v \n", got, want)
@@ -28,8 +28,8 @@ func TestSetProgramArea(t *testing.T){
 
 func TestGetInstruction(t *testing.T){
 	want := "000001"
-	fdun.instruction = "000001"
-	got := fdun.GetInstruction()
+	ftun.instruction = "000001"
+	got := ftun.GetInstruction()
 
 	if got != want{
 		t.Errorf("GetInstruction \n got: %v \n want %v \n", got, want)
@@ -38,8 +38,8 @@ func TestGetInstruction(t *testing.T){
 
 func TestGetProgramArea(t *testing.T){
 	want := "func-a"
-	fdun.programArea = "func-a"
-	got := fdun.GetProgramArea()
+	ftun.programArea = "func-a"
+	got := ftun.GetProgramArea()
 
 	if got != want{
 		t.Errorf("GetProgramArea \n got %v \n want %v \n", got, want)
