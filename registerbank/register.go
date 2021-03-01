@@ -10,15 +10,16 @@ type Register struct {
 	registerFunction string
 }
 
-func NewRegister(dcval int, hxval string, bnval string, rgnm string, rgfc string) (*Register, error){
-	register := Register{
-		decValue: dcval,
-		hexValue: hxval,
-		binValue: bnval,
-		registerName: rgnm,
-		registerFunction: rgfc}
+func NewRegister(rgnm string, rgfc string) *Register{
+	register := new(Register)
 
-	return &register, nil
+	register.decValue = 0
+	register.hexValue = "0x0"
+	register.binValue = "00"
+	register.registerName = rgnm
+	register.registerFunction = rgfc
+
+	return register
 }
 
 func (r *Register) SetValue(value int){
