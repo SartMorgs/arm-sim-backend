@@ -10,6 +10,7 @@ type Memmory struct{
 	splitedBinValue [4]string
 	configType string
 	memmoryAddress string
+	aliasField string
 }
 
 func NewMemmory(memaddr string) *Memmory{
@@ -21,6 +22,7 @@ func NewMemmory(memaddr string) *Memmory{
 	memmory.fullBinValue = "00000000000000000000000000000000"
 	memmory.configType = "D"
 	memmory.memmoryAddress = memaddr 
+	memmory.aliasField = ""
 
 	return memmory
 }
@@ -35,6 +37,14 @@ func (m *Memmory) SetValue(value int){
 
 func (m *Memmory) SetConfigType(tp string){
 	m.configType = tp
+}
+
+func (m* Memmory) SetAliasField(alias string){
+	m.aliasField = alias
+}
+
+func (m* Memmory) SetFullBinValue(value string){
+	m.fullBinValue = value
 }
 
 func (m *Memmory) GetAddress() string{
@@ -59,6 +69,14 @@ func (m *Memmory) GetConfigType() string{
 
 func (m *Memmory) GetSplitBin() [4]string{
 	return m.splitedBinValue
+}
+
+func (m *Memmory) GetAliasField() string{
+	return m.aliasField
+}
+
+func (m *Memmory) GetFullBinValue() string{
+	return m.fullBinValue
 }
 
 func (m *Memmory) toBinValue(){

@@ -139,11 +139,42 @@ func TestSplitBin(t *testing.T){
 	}
 }
 
-/*
-func TestSplitBin(t *testing.T){
-	want := ["00000000" "00000101" "00100011" "01000001"]
-	mem.
+func TestSetAliasField(t *testing.T){
+	want := "Area-A"
+	mem.SetAliasField("Area-A")
+	got := mem.aliasField
+
+	if got != want{
+		t.Errorf("SetAliasField \n got: %v \n want: %v \n", got, want)
+	}
 }
 
-git add . && git commit -m "add split value to memmory" && git push origin memmory
-*/
+func TestGetAliasField(t *testing.T){
+	want := "Area-A"
+	mem.aliasField = "Area-A"
+	got := mem.GetAliasField()
+
+	if got != want{
+		t.Errorf("GetAliasField \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestSetFullBinValue(t *testing.T){
+	want := "10001101010100001010100001011010"
+	mem.SetFullBinValue("10001101010100001010100001011010")
+	got := mem.fullBinValue
+
+	if got != want{
+		t.Errorf("SetFullBinValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestGetFullBinValue(t *testing.T){
+	want := "10001101010100001010100001011010"
+	mem.fullBinValue = "10001101010100001010100001011010"
+	got := mem.GetFullBinValue()
+
+	if got != want{
+		t.Errorf("GetFullBinValue \n got: %v \n want: %v \n", got, want)
+	}
+}
