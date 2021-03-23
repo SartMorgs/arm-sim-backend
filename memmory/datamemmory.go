@@ -11,7 +11,7 @@ func NewDataMemmory() *DataMemmory{
 	datamemmory.memmoryList = make(map[string]*Memmory)
 
 	var addressMemmoryCode string
-	for count := 0; count < 1000; count++{
+	for count := 0; count < (4 * 1024); count++{
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
 		datamemmory.memmoryList[addressMemmoryCode] = NewMemmory(addressMemmoryCode)
 	}
@@ -21,4 +21,12 @@ func NewDataMemmory() *DataMemmory{
 
 func (dtmem *DataMemmory) ChangeField(addr string, value int){
 	dtmem.memmoryList[addr].SetValue(value)
+}
+
+func (dtmem *DataMemmory) ResetDataMemmory(){
+	var addressMemmoryCode string
+	for count := 0; count < (4 * 1024); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		dtmem.memmoryList[addressMemmoryCode].SetValue(0)
+	}
 }
