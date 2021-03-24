@@ -2,6 +2,7 @@ package interruption
 
 type Interruption struct{
 	trigger bool
+	systemSaved string
 }
 
 func NewInterruption(tg bool) *Interruption{
@@ -17,4 +18,8 @@ func (i *Interruption) TurnOnTrigger(){
 
 func (i *Interruption) TurnOffTrigger(){
 	i.trigger = false
+}
+
+func (i *Interruption) SaveSystemStatus(sv string){
+	i.systemSaved = sv
 }
