@@ -23,6 +23,8 @@ func NewProgramCounter(currptr int, dcaddmem int, hxaddmem string, bnaddmem stri
 
 func (pc *ProgramCounter) SetAddressMemmory(addr int){
 	pc.decAddressMemmory = addr
+	pc.toBinAddress()
+	pc.toHexAddress()
 }
 
 func (pc *ProgramCounter) GetDecAddressMemmory() int{
