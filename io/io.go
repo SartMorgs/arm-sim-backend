@@ -4,6 +4,7 @@ type Device struct{
 	name string
 	address string
 	config string
+	dType string
 }
 
 func NewDevice(nm string, addr string, cfg string) *Device{
@@ -12,6 +13,7 @@ func NewDevice(nm string, addr string, cfg string) *Device{
 	device.name = nm
 	device.address = addr
 	device.config = cfg
+	device.dType = ""
 
 	return device
 }
@@ -38,4 +40,12 @@ func (d *Device) SetConfig(cfg string){
 
 func (d *Device) GetConfig() string{
 	return d.config
+}
+
+func (d *Device) SetType(t string){
+	d.dType = t
+}
+
+func (d *Device) GetType() string{
+	return d.dType
 }

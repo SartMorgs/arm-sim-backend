@@ -63,3 +63,23 @@ func TestGetConfig(t *testing.T){
 		t.Errorf("GetConfig \n got: %v \n want: %v \n", got, want)
 	}
 }
+
+func TestSetType(t *testing.T){
+	want := "In"
+	dev.SetType("In")
+	got := dev.dType
+
+	if got != want{
+		t.Errorf("SetType \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestGetType(t *testing.T){
+	want := "Out"
+	dev.dType = "Out"
+	got := dev.GetType()
+
+	if got != want{
+		t.Errorf("GetType \n got: %v \n want: %v \n", got, want)
+	}
+}
