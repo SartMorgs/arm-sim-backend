@@ -83,3 +83,65 @@ func TestGetType(t *testing.T){
 		t.Errorf("GetType \n got: %v \n want: %v \n", got, want)
 	}
 }
+
+func TestSetValue(t *testing.T){
+	want := 77
+	dev.SetValue(77)
+	got := dev.decValue 
+
+	if got != want{
+		t.Errorf("SetValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestGetDecValue(t *testing.T){
+	want := 77
+	dev.decValue = 77
+	got := dev.GetDecValue()
+
+	if got != want{
+		t.Errorf("GetDecValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestGetBinValue(t *testing.T){
+	want := "10101"
+	dev.binValue = "10101"
+	got := dev.GetBinValue()
+
+	if got != want{
+		t.Errorf("GetBinValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestGetHexValue(t *testing.T){
+	want := "0x37"
+	dev.hexValue = "0x37"
+	got := dev.GetHexValue()
+
+	if got != want{
+		t.Errorf("GetHexValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestToBinValue(t *testing.T){
+	want := "111"
+	dev.decValue = 7
+	dev.toBinValue()
+	got := dev.binValue
+
+	if got != want{
+		t.Errorf("toBinValue \n got: %v \n want: %v \n", got, want)
+	}
+}
+
+func TestToHexValue(t *testing.T){
+	want := "0x37"
+	dev.decValue = 55
+	dev.toHexValue()
+	got := dev.hexValue
+
+	if got != want{
+		t.Errorf("toHexValue \n got: %v \n want: %v \n", got, want)
+	}
+}

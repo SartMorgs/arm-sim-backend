@@ -24,6 +24,8 @@ func NewRegister(rgnm string, rgfc string) *Register{
 
 func (r *Register) SetValue(value int){
 	r.decValue = value
+	r.toBinValue()
+	r.toHexValue()
 }
 
 func (r *Register) SetRegisterName(name string){

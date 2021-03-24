@@ -33,6 +33,8 @@ func (m *Memmory) SetAddress(addr string){
 
 func (m *Memmory) SetValue(value int){
 	m.decValue = value
+	m.toBinValue()
+	m.toHexValue()
 }
 
 func (m *Memmory) SetConfigType(tp string){
