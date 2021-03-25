@@ -22,3 +22,9 @@ func (ibank *InterruptionBank) TriggerInterruption(intnum int){
 func (ibank *InterruptionBank) TurnOffInterruption(intnum int){
 	ibank.interruptionList[intnum].TurnOffTrigger()
 }
+
+func (ibank *InterruptionBank) ResetInterruptionBank(){
+	for count := 1; count < 17; count++{
+		ibank.interruptionList[count].TurnOffTrigger()
+	}
+}

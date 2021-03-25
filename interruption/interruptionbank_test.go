@@ -27,3 +27,18 @@ func TestTurnOffInterruption(t *testing.T){
 		t.Errorf("TurnOffInterruption \n got: %v \n want %v \n", got, want)
 	}
 }
+
+func TestResetInterruptionBank(t *testing.T){
+	itbk := NewInterruptionBank()
+
+	want := [17]bool{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}
+	itbk.ResetInterruptionBank()
+	got := itbk.interruptionList
+
+	for count := 1; count < 17; count++{
+		if got[count].trigger != want[count]{
+			t.Errorf("ResetInterruptionBank \n got: %v \n want %v \n", got, want)
+			break
+		}
+	}
+}
