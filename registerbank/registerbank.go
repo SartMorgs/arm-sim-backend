@@ -25,3 +25,11 @@ func NewRegisterBank() *RegisterBank{
 func (rbank *RegisterBank) ChangeRegister(regcode string, regvalue int){
 	rbank.registerList[regcode].SetValue(regvalue)
 }
+
+func (rbank *RegisterBank) ResetRegisterBank(){
+	var registerCode string
+	for count := 0; count < 17; count++{
+		registerCode = "R" + strconv.Itoa(count)
+		rbank.registerList[registerCode].decValue = 0
+	}
+}
