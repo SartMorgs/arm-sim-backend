@@ -86,3 +86,44 @@ func TestConfigForSubs(t *testing.T){
 		t.Errorf("ConfigForSubs \n got: %v \n want %v \n", got, want)
 	}
 }
+
+func TestConfigForAnds(t *testing.T){
+	exun := NewExecuteUnit()
+
+	want := map[string]int64{
+		"register_rd": 2,
+		"register_rn": 2,
+		"register_rm": 4,
+	}
+	exun.ConfigForAnds("00010", "00010", "00100")
+	got := exun.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForAnds \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForLdm(t* testing.T){
+	exun := NewExecuteUnit()
+
+	want := map[string]int64{
+		"register_rn": 2,
+		"register_1": 4,
+		"register_2": 5,
+		"register_3": 6,
+		"register_4": 7,
+	}
+
+	var register_list = []string{
+		"00100",
+		"00101",
+		"00110",
+		"00111"}
+
+	exun.ConfigForLdm("00010", register_list)
+	got := exun.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForLdm \n got: %v \n want %v \n", got, want)
+	}
+}
