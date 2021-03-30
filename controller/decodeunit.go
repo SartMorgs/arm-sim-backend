@@ -12,6 +12,15 @@ type DecodeUnit struct{
 	instructionMap map[string]string
 }
 
+func NewDecodeUnit() *DecodeUnit{
+	decodeunit := new(DecodeUnit)
+	decodeunit.instructionCode = ""
+	decodeunit.instructionType = ""
+	decodeunit.instructionFormat = make(map[string]string)
+
+	return decodeunit
+}
+
 func (it *Instruction) SetInstruction(inst string){
 	it.instructionCode = inst
 }
