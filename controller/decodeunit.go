@@ -1,15 +1,12 @@
 package controller
 
-type Instruction struct{
+type DecodeUnit struct{
+	InstructionMap
+
 	instructionCode string
 	instructionType string
 	instructionFormat map[string]string
-}
-
-type DecodeUnit struct{
-	Instruction
 	opcode string
-	instructionMap map[string]string
 }
 
 func NewDecodeUnit() *DecodeUnit{
@@ -21,7 +18,7 @@ func NewDecodeUnit() *DecodeUnit{
 	return decodeunit
 }
 
-func (it *Instruction) SetInstruction(inst string){
+func (it *DecodeUnit) SetInstruction(inst string){
 	it.instructionCode = inst
 }
 

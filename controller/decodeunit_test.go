@@ -16,7 +16,7 @@ func TestGetOpcode(t *testing.T){
 	}
 }
 
-func TestMapInstructionArithmetic1(t *testing. T){
+func TestMapInstructionArithmetic1(t *testing.T){
 	want := "Arithmetic1"
 	dcun.instructionCode = "10111001010100001010100001011010"
 	dcun.instructionMap = map[string]string{
@@ -190,7 +190,7 @@ func TestMapInstructionLoadStore2(t *testing.T){
 		t.Errorf("MapInstruction for load and store type 2 \n got: %v \n want %v \n", got, want)
 	}
 }
-
+/*
 func TestMapInstructionNop(t *testing.T){
 	want := "Nop"
 	dcun.instructionCode = "00000001010100001010100001011010"
@@ -212,6 +212,7 @@ func TestMapInstructionNop(t *testing.T){
 		t.Errorf("MapInstruction for nop \n got: %v \n want %v \n", got, want)
 	}
 }
+*/
 
 func TestSplitInstructionArithmetic1(t *testing.T){
 	// Arithmetic and Logical Instructions
