@@ -7,6 +7,26 @@ import (
 
 var exun ExecuteUnit
 
+func TestSetExecuteInstruction(t *testing.T){
+	want := "10111001010100001010100001011010"
+	exun.SetInstruction("10111001010100001010100001011010")
+	got := exun.instruction 
+
+	if want != got{
+		t.Errorf("SetInstruction \n got: %v want %v \n", got, want)
+	}
+}
+
+func TestGetExecuteInstruction(t *testing.T){
+	want := "10111001010100001010100001011010"
+	exun.instruction = "10111001010100001010100001011010"
+	got := exun.GetInstruction("10111001010100001010100001011010")
+
+	if want != got{
+		t.Errorf("GetInstruction \n got: %v want %v \n", got, want)
+	}
+}
+
 func TestConfigForLdi(t *testing.T){
 	exun := NewExecuteUnit()
 

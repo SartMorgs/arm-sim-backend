@@ -3,6 +3,7 @@ package controller
 import "strconv"
 
 type ExecuteUnit struct{
+	instruction string
 	config map[string]int64
 }
 
@@ -11,6 +12,14 @@ func NewExecuteUnit() *ExecuteUnit{
 	executeunit.config = make(map[string]int64)
 
 	return executeunit
+}
+
+func (eu *ExecuteUnit) SetInstruction(inst string){
+	eu.instruction = inst
+}
+
+func (eu *ExecuteUnit) GetInstruction() string{
+	return eu.instruction
 }
 
 func (eu *ExecuteUnit) ConfigForLdi(reg string, value string){

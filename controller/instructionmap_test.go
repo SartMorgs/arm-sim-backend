@@ -9,38 +9,49 @@ var imp InstructionMap
 
 func SetInstructionMap(){
 	// Instruction map
-	imp.instructionMap = map[string]string{
+	imp.instructionMap = map[string][2]string{
 		// Arithmetic
-		"000001": "ADDS",
-		"000010": "SUBS",
-		"000011": "MULS",
-		"000100": "ANDS",
-		"000101": "ORRS",
-		"000110": "EORS",
-		"000111": "BICS",
-		"001000": "ASRS",
-		"001001": "LSLS",
-		"001010": "LSRS",
-		"001011": "RORS",
+		"000001": {"ADDS", "Arithmetic"},
+		"000010": {"SUBS", "Arithmetic"},
+		"000011": {"MULS", "Arithmetic"},
+		"000100": {"ANDS", "Arithmetic"},
+		"000101": {"ORRS", "Arithmetic"},
+		"000110": {"EORS", "Arithmetic"},
+		"000111": {"BICS", "Arithmetic"},
+		"001000": {"ASRS", "Arithmetic"},
+		"001001": {"LSLS", "Arithmetic"},
+		"001010": {"LSRS", "Arithmetic"},
+		"001011": {"RORS", "Arithmetic"},
 
 		// Comparison
-		"001100": "CMN",
-		"001101": "CMP",
+		"001100": {"CMN", "Comparison"},
+		"001101": {"CMP", "Comparison"},
 
 		// Bypass
-		"001110": "MOVS",
-		"001111": "BEQ",
-		"010000": "BNE",
-		"010001": "BLT",
-		"010010": "BL",
-		"010011": "BX",
+		"001110": {"MOVS", "Bypass"},
+		"001111": {"BEQ", "Bypass"},
+		"010000": {"BNE", "Bypass"},
+		"010001": {"BLT", "Bypass"},
+		"010010": {"BL", "Bypass"},
+		"010011": {"BX", "Bypass"},
 
 		// Load and Store
-		"010100": "LDR",
-		"010101": "STR",
+		"010100": {"LDR", "Load"},
+		"010101": {"STR", "Store"},
 
 		// Nothing
-		"111111": "NOP",
+		"111111": {"NOP", "Nothing"},
+	}
+}
+
+func TestGetArithmeticInstruction(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeinstruction("00000101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetArithmeticInstruction \n got: %v \n want %v \n", got, want)
 	}
 }
 
