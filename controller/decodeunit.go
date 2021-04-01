@@ -30,7 +30,7 @@ func (dc *DecodeUnit) MapInstruction() string{
 	instructionRune := []rune(dc.instructionCode)
 	dc.opcode = string(instructionRune[0:6])
 
-	return dc.instructionMap[dc.opcode]
+	return dc.instructionMap[dc.opcode][1]
 }
 
 func (dc *DecodeUnit) SplitInstruction(){

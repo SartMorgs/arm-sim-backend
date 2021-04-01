@@ -15,7 +15,7 @@ func TestGetOpcode(t *testing.T){
 		t.Errorf("GetOpcode \n got: %v \n want %v \n", got, want)
 	}
 }
-
+/*
 func TestMapInstructionArithmetic1(t *testing.T){
 	want := "Arithmetic1"
 	dcun.instructionCode = "10111001010100001010100001011010"

@@ -1,9 +1,6 @@
 package controller
 
-import "arm/programcounter"
-
 type FetchUnit struct{
-	programcounter.ProgramCounter
 	instruction string
 	programArea string
 }

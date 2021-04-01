@@ -44,14 +44,245 @@ func SetInstructionMap(){
 	}
 }
 
-func TestGetArithmeticInstruction(t *testing.T){
+func TestGetTypeInstructionAdds(t *testing.T){
 	SetInstructionMap()
 
 	want := "Arithmetic"
-	got := imp.GetTypeinstruction("00000101010100001010100001011010")
+	got := imp.GetTypeInstruction("00000101010100001010100001011010")
 
 	if got != want{
-		t.Errorf("GetArithmeticInstruction \n got: %v \n want %v \n", got, want)
+		t.Errorf("GetTypeInstructionAdds \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionSubs(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00001001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionSubs \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionMuls(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00001101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionMuls \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionAnds(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00010001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionAnds \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionOrrs(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00010101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionOrrs \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionEors(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00011001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionEors \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBics(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00011101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionBics \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionAsrs(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00100001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionAsrs \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionLsls(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00100101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionLsls \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionLsrs(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00101001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionLsrs \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionRors(t *testing.T){
+	SetInstructionMap()
+
+	want := "Arithmetic"
+	got := imp.GetTypeInstruction("00101101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructionRors \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionCmn(t *testing.T){
+	SetInstructionMap()
+
+	want := "Comparison"
+	got := imp.GetTypeInstruction("00110001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioCmn \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionCmp(t *testing.T){
+	SetInstructionMap()
+
+	want := "Comparison"
+	got := imp.GetTypeInstruction("00110101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioCmp \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionMovs(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("00111001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioMovs \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBeq(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("00111101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioBeq \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBne(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("01000001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioBne \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBlt(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("01000101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioBlt \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBl(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("01001001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioBl \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionBx(t *testing.T){
+	SetInstructionMap()
+
+	want := "Bypass"
+	got := imp.GetTypeInstruction("01001101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioBx \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionLdr(t *testing.T){
+	SetInstructionMap()
+
+	want := "Load"
+	got := imp.GetTypeInstruction("01010001010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioLdr \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionStr(t *testing.T){
+	SetInstructionMap()
+
+	want := "Store"
+	got := imp.GetTypeInstruction("01010101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioStr \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetTypeInstructionNop(t *testing.T){
+	SetInstructionMap()
+
+	want := "Nothing"
+	got := imp.GetTypeInstruction("11111101010100001010100001011010")
+
+	if got != want{
+		t.Errorf("GetTypeInstructioNop \n got: %v \n want %v \n", got, want)
 	}
 }
 
