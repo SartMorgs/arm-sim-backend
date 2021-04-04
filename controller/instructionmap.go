@@ -1,7 +1,7 @@
 package controller
 
 type InstructionMap struct{	
-	instructionMap map[string][2]string
+	instructionMap map[string][3]string
 }
 
 func (im *InstructionMap) InstructionMap(inst string) string{

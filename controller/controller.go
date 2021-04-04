@@ -26,3 +26,7 @@ func (c *Controller) ChangeInstructionFetch(inst string){
 func (c *Controller) ChangeInstructionDecode(inst string){
 	c.decodeUnit.instructionCode = inst
 }
+
+func (c *Controller) ChangeInstructionExecute(inst string){
+	c.executeUnit.instruction = inst
+}
