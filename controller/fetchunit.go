@@ -1,11 +1,16 @@
 package controller
 
-import "arm/programcounter"
-
 type FetchUnit struct{
-	programcounter.ProgramCounter
 	instruction string
 	programArea string
+}
+
+func NewFetchUnit() *FetchUnit{
+	fetchUnit := new(FetchUnit)
+	fetchUnit.instruction = ""
+	fetchUnit.programArea = "main"
+
+	return fetchUnit
 }
 
 func (ft *FetchUnit) SetInstruction(inst string){

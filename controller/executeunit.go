@@ -3,6 +3,7 @@ package controller
 import "strconv"
 
 type ExecuteUnit struct{
+	instruction string
 	config map[string]int64
 }
 
@@ -13,82 +14,125 @@ func NewExecuteUnit() *ExecuteUnit{
 	return executeunit
 }
 
-func (eu *ExecuteUnit) ConfigForLdi(reg string, value string){
-	x, _ := strconv.ParseInt(reg, 2, 64)
-	eu.config["register"] = x
+func (eu *ExecuteUnit) SetInstruction(inst string){
+	eu.instruction = inst
+}
+
+func (eu *ExecuteUnit) GetInstruction() string{
+	return eu.instruction
+}
+
+func (eu *ExecuteUnit) ConfigForLdr1(target_reg string, addr_reg string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(addr_reg, 2, 64)
+	eu.config["address_register"] = y
+}
+
+
+func (eu *ExecuteUnit) ConfigForLdr2(target_reg string, addr string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(addr, 2, 64)
+	eu.config["address"] = y
+}
+
+func (eu *ExecuteUnit) ConfigForStr1(target_reg string, addr_reg string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(addr_reg, 2, 64)
+	eu.config["address_register"] = y
+}
+
+func (eu *ExecuteUnit) ConfigForStr2(target_reg string, addr string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(addr, 2, 64)
+	eu.config["address"] = y
+}
+
+func (eu *ExecuteUnit) ConfigForAdds1(target_reg string, source_reg1 string, source_reg2 string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg1, 2, 64)
+	eu.config["source_register1"] = y
+
+	z, _ := strconv.ParseInt(source_reg2, 2, 64)
+	eu.config["source_register2"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForAdds2(target_reg string, source_reg string, value string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg, 2, 64)
+	eu.config["source_register"] = y
+
+	z, _ := strconv.ParseInt(value, 2, 64)
+	eu.config["value"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForSubs1(target_reg string, source_reg1 string, source_reg2 string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg1, 2, 64)
+	eu.config["source_register1"] = y
+
+	z, _ := strconv.ParseInt(source_reg2, 2, 64)
+	eu.config["source_register2"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForSubs2(target_reg string, source_reg string, value string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg, 2, 64)
+	eu.config["source_register"] = y
+
+	z, _ := strconv.ParseInt(value, 2, 64)
+	eu.config["value"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForAnds1(target_reg string, source_reg1 string, source_reg2 string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg1, 2, 64)
+	eu.config["source_register1"] = y
+
+	z, _ := strconv.ParseInt(source_reg2, 2, 64)
+	eu.config["source_register2"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForAnds2(target_reg string, source_reg string, value string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(source_reg, 2, 64)
+	eu.config["source_register"] = y
+
+	z, _ := strconv.ParseInt(value, 2, 64)
+	eu.config["value"] = z
+}
+
+func (eu *ExecuteUnit) ConfigForMovs1(target_reg string, value_reg string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
+
+	y, _ := strconv.ParseInt(value_reg, 2, 64)
+	eu.config["value_register"] = y
+}
+
+func (eu *ExecuteUnit) ConfigForMovs2(target_reg string, value string){
+	x, _ := strconv.ParseInt(target_reg, 2, 64)
+	eu.config["target_register"] = x
 
 	y, _ := strconv.ParseInt(value, 2, 64)
 	eu.config["value"] = y
-}
-
-func (eu *ExecuteUnit) ConfigForLdr(reg_rt string, reg_rn string){
-	x, _ := strconv.ParseInt(reg_rt, 2, 64)
-	eu.config["register_rt"] = x
-
-	y, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = y
-}
-
-func (eu *ExecuteUnit) ConfigForStr(reg_rt string, reg_rn string, ram_addr string){
-	x, _ := strconv.ParseInt(reg_rt, 2, 64)
-	eu.config["register_rt"] = x
-
-	y, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = y
-
-	z, _ := strconv.ParseInt(ram_addr, 2, 64)
-	eu.config["ram_address"] = z
-}
-
-func (eu *ExecuteUnit) ConfigForAdds(reg_rd string, reg_rn string, reg_rm string, imm string){
-	x, _ := strconv.ParseInt(reg_rd, 2, 64)
-	eu.config["register_rd"] = x
-
-	y, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = y
-
-	z, _ := strconv.ParseInt(reg_rm, 2, 64)
-	eu.config["register_rm"] = z
-
-	m, _ := strconv.ParseInt(imm, 2, 64)
-	eu.config["immediate"] = m
-}
-
-func (eu *ExecuteUnit) ConfigForSubs(reg_rd string, reg_rn string, reg_rm string, imm string){
-	x, _ := strconv.ParseInt(reg_rd, 2, 64)
-	eu.config["register_rd"] = x
-
-	y, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = y
-
-	z, _ := strconv.ParseInt(reg_rm, 2, 64)
-	eu.config["register_rm"] = z
-
-	m, _ := strconv.ParseInt(imm, 2, 64)
-	eu.config["immediate"] = m
-}
-
-func (eu *ExecuteUnit) ConfigForAnds(reg_rd string, reg_rn string, reg_rm string){
-	x, _ := strconv.ParseInt(reg_rd, 2, 64)
-	eu.config["register_rd"] = x
-
-	y, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = y
-
-	z, _ := strconv.ParseInt(reg_rm, 2, 64)
-	eu.config["register_rm"] = z
-}
-
-func (eu *ExecuteUnit) ConfigForLdm(reg_rn string, reg_list []string){
-	x, _ := strconv.ParseInt(reg_rn, 2, 64)
-	eu.config["register_rn"] = x
-
-	var registernumber string
-	for count := 1; count <= len(reg_list); count++{
-		registernumber = strconv.FormatInt(int64(count), 10)
-
-		y, _ := strconv.ParseInt(reg_list[count - 1], 2, 64)
-
-		eu.config["register_" + registernumber] = y
-	}
 }
