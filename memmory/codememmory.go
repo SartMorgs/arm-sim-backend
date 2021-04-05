@@ -46,3 +46,7 @@ func (cdmem *CodeMemmory) ResetCodeMemmory(){
 		cdmem.romList[addressMemmoryCode].SetFullBinValue("00000000000000000000000000000000")
 	}
 }
+
+func (cdmem *CodeMemmory) GetRomList() map[string]*Memmory{
+	return cdmem.romList
+}
