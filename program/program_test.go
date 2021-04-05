@@ -12,7 +12,8 @@ import (
 	"testing"
 	"reflect"
 	"strconv"
-	//"encoding/json"
+	"encoding/json"
+	"fmt"
 )
 
 var pr Program
@@ -196,8 +197,18 @@ func TestBuildCodeMemmoryJson(t *testing.T){
 	}
 	pr := NewProgram(rom_teste)
 
-	for count := (4 * 1024); count < ((4 * 1024) + 10); count++{
+	var rom_decimal_list []int
+	var rom_hexadecimal_list []string
+	for count := (4 * 1024); count < (12 * 1024); count++{
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		print(pr.rom.GetRomList()[addressMemmoryCode].GetDecValue())
+		rom_decimal_list = append(rom_decimal_list, pr.rom.GetRomList()[addressMemmoryCode].GetDecValue())
+		rom_hexadecimal_list = append(rom_hexadecimal_list, pr.rom.GetRomList()[addressMemmoryCode].GetHexValue())
 	}
+
+	jrom_decimal, _ := json.Marshal(pr.rom.GetRomList()["0x1000"])
+
+	fmt.Println(string(jrom_decimal))
+	//fmt.Println(rom_hexadecimal_list[0:10])
 }
+
+// PASSA A CRIAÇÃO DOS JSONS PARA DENTRO DA CLASSE
