@@ -11,14 +11,14 @@ type ProgramCounter struct{
 	binAddressMemmory string
 }
 
-func NewProgramCounter(currptr int, dcaddmem int, hxaddmem string, bnaddmem string) (*ProgramCounter, error){
-	programcounter := ProgramCounter{
-		currentPointer: currptr,
-		decAddressMemmory: dcaddmem,
-		hexAddressMemmory: hxaddmem,
-		binAddressMemmory: bnaddmem}
+func NewProgramCounter() *ProgramCounter{
+	programcounter := new(ProgramCounter)
+	programcounter.currentPointer = 0
+	programcounter.decAddressMemmory = 0
+	programcounter.hexAddressMemmory = "0x0"
+	programcounter.binAddressMemmory = "00"
 
-	return &programcounter, nil
+	return programcounter
 }
 
 func (pc *ProgramCounter) SetAddressMemmory(addr int){

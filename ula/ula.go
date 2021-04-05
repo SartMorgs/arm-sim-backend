@@ -6,12 +6,14 @@ type Ula struct {
 	result int
 }
 
-func NewUla(v1 int, v2 int, rs int) (*Ula, error){
-	ula := Ula{
-		value1: v1, 
-		value2: v2, 
-		result: rs}
-	return &ula, nil
+func NewUla() *Ula{
+	ula := new(Ula)
+
+	ula.value1 = 0
+	ula.value2 = 0
+	ula.result = 0
+
+	return ula
 }
 
 func (u *Ula) GetValue1() int{
