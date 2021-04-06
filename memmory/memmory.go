@@ -1,6 +1,9 @@
 package memmory
 
-import "strconv"
+import (
+	"strconv"
+	"encoding/json"
+)
 
 type Memmory struct{
 	decValue int
@@ -115,4 +118,18 @@ func (m *Memmory) splitBin(){
 	} else{
 		m.splitedBinValue = [4]string{"00000000", "00000000", "00000000", "00000000"}
 	}
+}
+
+func (m *Memmory) GetMemmoryJson() string{
+	str_memmory := map[string]string{
+		"decimal_value": strconv.FormatInt(int64(m.decValue), 10),
+		"hexadecimal_value": m.hexValue,
+		"binary_value": m.binValue,
+		"full_binary": m.fullBinValue,
+		"config_type": m.configType,
+		"memmory_address": m.memmoryAddress,
+		"alias_field": m.aliasField}
+
+	jmem, _ := json.Marshal(str_memmory)
+	return string(jmem)
 }

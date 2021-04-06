@@ -13,7 +13,6 @@ import (
 	"reflect"
 	"strconv"
 	"encoding/json"
-	"fmt"
 )
 
 var pr Program
@@ -197,18 +196,140 @@ func TestBuildCodeMemmoryJson(t *testing.T){
 	}
 	pr := NewProgram(rom_teste)
 
-	var rom_decimal_list []int
-	var rom_hexadecimal_list []string
-	for count := (4 * 1024); count < (12 * 1024); count++{
+	code_memmory := make(map[int]string)
+
+	for count := 0; count < (12 * 1024); count++{
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_decimal_list = append(rom_decimal_list, pr.rom.GetRomList()[addressMemmoryCode].GetDecValue())
-		rom_hexadecimal_list = append(rom_hexadecimal_list, pr.rom.GetRomList()[addressMemmoryCode].GetHexValue())
+		str_memmory := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(rom_teste.GetRomList()[addressMemmoryCode].GetDecValue()), 10),
+			"hexadecimal_value": rom_teste.GetRomList()[addressMemmoryCode].GetHexValue(),
+			"binary_value": rom_teste.GetRomList()[addressMemmoryCode].GetBinValue(),
+			"full_binary": rom_teste.GetRomList()[addressMemmoryCode].GetFullBinValue(),
+			"config_type": rom_teste.GetRomList()[addressMemmoryCode].GetConfigType(),
+			"memmory_address": rom_teste.GetRomList()[addressMemmoryCode].GetAddress(),
+			"alias_field": rom_teste.GetRomList()[addressMemmoryCode].GetAliasField()}
+
+		jmem, _ := json.Marshal(str_memmory)
+
+		code_memmory[count] = string(jmem)
 	}
 
-	jrom_decimal, _ := json.Marshal(pr.rom.GetRomList()["0x1000"])
+	jcode_memmory, _ := json.Marshal(code_memmory)
+	want := string(jcode_memmory)
+	got := pr.GetCodeMemmory().GetCodeMemmoryJson()
 
-	fmt.Println(string(jrom_decimal))
-	//fmt.Println(rom_hexadecimal_list[0:10])
+	if got != want{
+		t.Errorf("GetCodeMemmoryJson to Program \n got: %v \n want %v \n", got, want)
+	}
 }
 
-// PASSA A CRIAÇÃO DOS JSONS PARA DENTRO DA CLASSE
+func TestBuildDataMemmoryJson(t *testing.T){
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	data_memmory_test := memmory.NewDataMemmory()
+	data_memmory := make(map[int]string)
+
+	for count := 0; count < (4 * 1024); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		str_memmory := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetDecValue()), 10),
+			"hexadecimal_value": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetHexValue(),
+			"binary_value": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetBinValue(),
+			"full_binary": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetFullBinValue(),
+			"config_type": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetConfigType(),
+			"memmory_address": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetAddress(),
+			"alias_field": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetAliasField()}
+
+		jmem, _ := json.Marshal(str_memmory)
+
+		data_memmory[count] = string(jmem)
+	}
+
+	jdata_memmory, _ := json.Marshal(data_memmory)
+	want := string(jdata_memmory)
+	got := pr.GetDataMemmory().GetDataMemmoryJson()
+
+	if got != want{
+		t.Errorf("GetDataMemmoryJson to Program \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestBuildDeviceMemmoryJson(t *testing.T){
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	device_memmory_test := memmory.NewDeviceMemmory()
+	device_memmory := make(map[int]string)
+
+	for count := 0; count < (4 * 1024); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		str_memmory := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetDecValue()), 10),
+			"hexadecimal_value": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetHexValue(),
+			"binary_value": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetBinValue(),
+			"full_binary": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetFullBinValue(),
+			"config_type": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetConfigType(),
+			"memmory_address": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetAddress(),
+			"alias_field": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetAliasField()}
+
+		jmem, _ := json.Marshal(str_memmory)
+
+		device_memmory[count] = string(jmem)
+	}
+
+	jdevice_memmory, _ := json.Marshal(device_memmory)
+	want := string(jdevice_memmory)
+	got := pr.GetDataMemmory().GetDataMemmoryJson()
+
+	if got != want{
+		t.Errorf("GetDeviceMemmoryJson to Program \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestBuildRegisterBankJson(t *testing.T){
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	register_bank_test := registerbank.NewRegisterBank()
+	register_bank := make(map[string]string)
+
+	var registerCode string
+	for count := 0; count < 17; count++{
+		registerCode = "R" + strconv.Itoa(count)
+		str_register_bank := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(register_bank_test.GetRegisterBank() [registerCode].GetDecValue()), 10),
+			"hexadecimal_value": register_bank_test.GetRegisterBank() [registerCode].GetHexValue(),
+			"binary_value": register_bank_test.GetRegisterBank() [registerCode].GetBinValue(),
+			"register_name": register_bank_test.GetRegisterBank() [registerCode].GetRegisterName(),
+			"register_function": register_bank_test.GetRegisterBank() [registerCode].GetRegisterFunction()}
+
+		jrbank, _ := json.Marshal(str_register_bank)
+
+		register_bank[registerCode] = string(jrbank)
+	}
+
+	jregister_bank, _ := json.Marshal(register_bank)
+	want := string(jregister_bank)
+	got := pr.GetRegisterBank().GetRegisterBankJson()
+	
+	if got != want{
+		t.Errorf("GetRegisterBankJson to Program \n got: %v \n want %v \n", got, want)
+	}
+
+}

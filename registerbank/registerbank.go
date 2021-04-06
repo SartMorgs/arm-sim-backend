@@ -2,6 +2,7 @@ package registerbank
 
 import(
 	"strconv"
+	"encoding/json"
 )
 
 type RegisterBank struct{
@@ -32,4 +33,31 @@ func (rbank *RegisterBank) ResetRegisterBank(){
 		registerCode = "R" + strconv.Itoa(count)
 		rbank.registerList[registerCode].decValue = 0
 	}
+}
+
+func (rbank *RegisterBank) GetRegisterBank() map[string]*Register{
+	return rbank.registerList
+}
+
+func (rbank *RegisterBank) GetRegisterBankJson() string{
+	register_bank := make(map[string]string)
+
+	var registerCode string
+	for count := 0; count < 17; count++{
+		registerCode = "R" + strconv.Itoa(count)
+		str_register_bank := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(rbank.registerList[registerCode].GetDecValue()), 10),
+			"hexadecimal_value": rbank.registerList[registerCode].GetHexValue(),
+			"binary_value": rbank.registerList[registerCode].GetBinValue(),
+			"register_name": rbank.registerList[registerCode].GetRegisterName(),
+			"register_function": rbank.registerList[registerCode].GetRegisterFunction()}
+
+		jrbank, _ := json.Marshal(str_register_bank)
+
+		register_bank[registerCode] = string(jrbank)
+	}
+
+	jregister_bank, _ := json.Marshal(register_bank)
+
+	return string(jregister_bank)
 }

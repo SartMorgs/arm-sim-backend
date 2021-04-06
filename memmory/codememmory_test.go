@@ -3,6 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
+	"encoding/json"
 )
 
 var cmm CodeMemmory
@@ -57,5 +58,37 @@ func TestResetCodeMemmory(t *testing.T){
 
 	if got != want{
 		t.Errorf("ResetCodeMemmory \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetCodeMemmoryJson(t *testing.T){
+	cmm := NewCodeMemmory()
+	test := NewCodeMemmory()
+
+	code_memmory := make(map[int]string)
+
+	var addressMemmoryCode string
+	for count := 0; count < (12 * 1024); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		str_memmory := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(test.GetRomList()[addressMemmoryCode].GetDecValue()), 10),
+			"hexadecimal_value": test.GetRomList()[addressMemmoryCode].GetHexValue(),
+			"binary_value": test.GetRomList()[addressMemmoryCode].GetBinValue(),
+			"full_binary": test.GetRomList()[addressMemmoryCode].GetFullBinValue(),
+			"config_type": test.GetRomList()[addressMemmoryCode].GetConfigType(),
+			"memmory_address": test.GetRomList()[addressMemmoryCode].GetAddress(),
+			"alias_field": test.GetRomList()[addressMemmoryCode].GetAliasField()}
+
+		jmem, _ := json.Marshal(str_memmory)
+
+		code_memmory[count] = string(jmem)
+	}
+
+	jcode_memmory, _ := json.Marshal(code_memmory)
+	want := string(jcode_memmory)
+	got := cmm.GetCodeMemmoryJson()
+
+	if got != want{
+		t.Errorf("GetCodeMemmoryJson \n got: %v \n want %v \n", got, want)
 	}
 }
