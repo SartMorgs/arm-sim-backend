@@ -139,3 +139,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 		dc.instructionFormat["instruction"] = dc.instructionCode
 	}
 }
+
+func (dc *DecodeUnit) GetInstructionFormat() map[string]string{
+	return dc.instructionFormat
+}

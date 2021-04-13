@@ -30,3 +30,15 @@ func (c *Controller) ChangeInstructionDecode(inst string){
 func (c *Controller) ChangeInstructionExecute(inst string){
 	c.executeUnit.instruction = inst
 }
+
+func (c *Controller) GetFetchUnit() *FetchUnit{
+	return c.fetchUnit
+}
+
+func (c* Controller) GetDecodeUnit() *DecodeUnit{
+	return c.decodeUnit
+}
+
+func (c *Controller) GetExecuteUnit() *ExecuteUnit{
+	return c.executeUnit
+}
