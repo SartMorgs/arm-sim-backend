@@ -4,13 +4,14 @@ import(
 	"arm/memmory"
 	"arm/registerbank"
 
+	"strconv"
 	"testing"
 	"encoding/json"
 )
 
 var sim Simulator
 
-func TestRunProgram(t testing.T){
+func TestRunProgram(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
 	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
@@ -35,18 +36,22 @@ func TestRunProgram(t testing.T){
 
 	step_program := make(map[int]string)
 
+	var data_memmory_value int
+	var register_bank_value int
 	// Build code memmory for each step
 	for count := (4 * 1024); count < (12 * 1024); count++{
-		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count - (4 * 1024)]), 16)
-		data_memmory.ChangeField(data_memmory_values[addressMemmoryCode][0], data_memmory_values[addressMemmoryCode][1])
-		registerbank.ChangeRegister(register_bank_values[count - (4 * 1024)][0], register_bank_values[count - (4 * 1024)][1])
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count - (4 * 1024)), 16)
+		data_memmory_value, _ = strconv.Atoi(data_memmory_values[count][1])
+		register_bank_value, _ = strconv.Atoi(register_bank_values[count - (4 * 1024)][1])
+		data_memmory.ChangeField(data_memmory_values[count][0], data_memmory_value)
+		register_bank.ChangeRegister(register_bank_values[count - (4 * 1024)][0], register_bank_value)
 
 		str_steps := map[string]string{
 			"step": strconv.FormatInt(int64(count), 10),
 			"code_memmory": rom_teste.GetCodeMemmoryJson(),
 			"data_memmory": data_memmory.GetDataMemmoryJson(),
 			"device_memmory": device_memmory.GetDeviceMemmoryJson(),
-			"register_bank": registerbank.GetRegisterBank()}
+			"register_bank": register_bank.GetRegisterBankJson()}
 
 		jstep, _ := json.Marshal(str_steps)
 
@@ -55,6 +60,9 @@ func TestRunProgram(t testing.T){
 
 	jprogram, _ := json.Marshal(step_program)
 	want := string(jprogram)
-	got := sim.
+	got := sim.GetJsonSimulation()
 
+	if got != want{
+		t.Errorf("GetJsonSimulation \n got: %v \n want %v \n", got, want)
+	}
 }
