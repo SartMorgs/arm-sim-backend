@@ -50,6 +50,9 @@ func (s *Simulator) DecodeInstruction(){
 	s.controller.ChangeInstructionDecode(current_instruction)
 	s.controller.GetDecodeUnit().MapInstruction()
 	s.controller.GetDecodeUnit().SplitInstruction()
-	s.controller.GetDecodeUnit().SplitInstruction()
-	s.current_mapinstruction = 
+	s.current_mapinstruction = s.controller.GetDecodeUnit().GetInstructionFormat()
+}
+
+func (s *Simulator) ExecuteInstruction(){
+	
 }

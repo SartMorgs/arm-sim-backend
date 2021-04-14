@@ -2,7 +2,6 @@ package controller
 
 import (
 	"testing"
-	"reflect"
 )
 
 var dcun DecodeUnit
@@ -19,17 +18,12 @@ func TestGetOpcode(t *testing.T){
 	}
 }
 
-func TestGetInstructionFormat(t *testing.T){
-	want := map[string]string{
-		"rn": "10111",
-		"address": "11110100001011",
-	}
+func TestGetNameInstruction(t *testing.T){
+	want := "ORRS"
+	dcun.instructionName = "ORRS"
+	got := dcun.GetInstructionName()
 
-	cn.decodeUnit.instructionCode = "11010110111111101000010111011010"
-	cn.decodeUnit.SplitInstruction()
-	got := cn.decodeUnit.GetInstructionFormat()
-
-	if !reflect.DeepEqual(want, got){
-		t.Errorf("GetInstructionFormat \n got: %v \n want %v \n", got, want)
+	if want != got{
+		t.Errorf("GetInstructionName \n got: %v \n want %v \n", got, want)
 	}
 }

@@ -234,6 +234,35 @@ func TestSplitInstructionNop(t *testing.T){
 	}
 }
 
+func TestGetInstructionFormat(t *testing.T){
+	cn := NewController()
+	want := map[string]string{
+		"rn": "10111",
+		"address": "11110100001011",
+	}
+
+	cn.decodeUnit.instructionCode = "11010110111111101000010111011010"
+	cn.decodeUnit.SplitInstruction()
+	got := cn.decodeUnit.GetInstructionFormat()
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("GetInstructionFormat \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetInstructionName(t *testing.T){
+	cn := NewController()
+	want := "ORRS"
+
+	cn.decodeUnit.instructionCode = "00010101010100001010100001011010"
+	cn.decodeUnit.SplitInstruction()
+	got := cn.decodeUnit.GetInstructionName()
+
+	if got != want{
+		t.Errorf("GetInstructionName after split \n got: %v \n want %v \n", got, want)
+	}
+}
+
 // ---------------------------------------------------------------------------------------
 // Tests about execute unit
 // ---------------------------------------------------------------------------------------
@@ -422,4 +451,16 @@ func TestConfigForMovs2(t *testing.T){
 	if !reflect.DeepEqual(want, got){
 		t.Errorf("ConfigForMovs type 2 \n got: %v \n want %v \n", got, want)
 	}
+}
+
+func TestSetFunctionForConfigInstruction(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register": 2,
+		"value": 70,
+	}
+
+	// Continuar teste
 }

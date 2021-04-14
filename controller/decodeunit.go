@@ -6,6 +6,7 @@ type DecodeUnit struct{
 	instructionCode string
 	instructionType1 string
 	instructionType2 string
+	instructionName string
 	instructionFormat map[string]string
 	opcode string
 }
@@ -87,6 +88,7 @@ func (dc *DecodeUnit) GetOpcode() string{
 func (dc *DecodeUnit) MapInstruction(){
 	dc.opcode = dc.getOpcode(dc.instructionCode)
 
+	dc.instructionName = dc.instructionMap[dc.opcode][0]
 	dc.instructionType1 = dc.instructionMap[dc.opcode][1]
 	dc.instructionType2 = dc.instructionMap[dc.opcode][2]
 }
@@ -142,4 +144,8 @@ func (dc *DecodeUnit) SplitInstruction(){
 
 func (dc *DecodeUnit) GetInstructionFormat() map[string]string{
 	return dc.instructionFormat
+}
+
+func (dc *DecodeUnit) GetInstructionName() string{
+	return dc.instructionName
 }
