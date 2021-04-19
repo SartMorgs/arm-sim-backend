@@ -2,17 +2,42 @@ package controller
 
 import "strconv"
 
+type ConfigForInstruction struct{
+	targetRegisterBin string
+	targetRegisterDec int64
+
+	addressRegisterBin string
+	addressRegisterDec int64
+
+	addressInstructionBin string
+	addressInstructionDec int64
+
+	sourceRegister1Bin string 
+	sourceRegister1Dec int64
+
+	sourceRegister2Bin string 
+	sourceRegister2Dec int64
+
+	valueInstructionBin string
+	valueInstructionDec int64
+
+	valueRegisterBin string
+	valueRegisterDec int64
+}
+
 type ExecuteUnit struct{
 	instruction string
+	ConfigForInstruction
 	config map[string]int64
-	functionInstructionMap map[[2]string]interface{}
+	functionInstructionMap map[[2]string]func()
+	instructionFormatMap map[string]func(string)
 }
 
 func NewExecuteUnit() *ExecuteUnit{
 	executeunit := new(ExecuteUnit)
 	executeunit.config = make(map[string]int64)
 	
-	executeunit.functionInstructionMap = map[[2]string]interface{}{
+	executeunit.functionInstructionMap = map[[2]string]func(){
 		// Arithmetic
 		{"ADDS", "1"}: executeunit.ConfigForAdds1,
 		{"ADDS", "2"}: executeunit.ConfigForAdds2,
@@ -67,6 +92,16 @@ func NewExecuteUnit() *ExecuteUnit{
 		//{"NOP", "1"}: executeunit.ConfigForNop,
 	}
 
+	executeunit.instructionFormatMap = map[string]func(string){
+		"rd": executeunit.SetTargetRegister,
+		"rn": executeunit.SetSourceRegister1,
+		"rm": executeunit.SetSourceRegister2,
+		"data": executeunit.SetValueInstruction,
+		"imediato": executeunit.SetAddressInstruction,
+		"label": executeunit.SetValueInstruction,
+		"address": executeunit.SetAddressInstruction,
+	}
+
 	return executeunit
 }
 
@@ -74,121 +109,136 @@ func (eu *ExecuteUnit) SetInstruction(inst string){
 	eu.instruction = inst
 }
 
+func (eu *ExecuteUnit) SetTargetRegister(target_reg string){
+	eu.targetRegisterBin = target_reg
+	eu.targetRegisterDec, _ = strconv.ParseInt(eu.targetRegisterBin, 2, 64)
+}
+
+func (eu *ExecuteUnit) SetAddressInstruction(addr string){
+	eu.addressInstructionBin = addr
+	eu.addressInstructionDec, _ = strconv.ParseInt(eu.addressInstructionBin, 2, 64)
+}
+
+func (eu *ExecuteUnit) SetSourceRegister1(source_reg1 string){
+	eu.sourceRegister1Bin = source_reg1
+	eu.sourceRegister1Dec, _ = strconv.ParseInt(eu.sourceRegister1Bin, 2, 64)
+}
+
+func (eu *ExecuteUnit) SetSourceRegister2(source_reg2 string){
+	eu.sourceRegister2Bin = source_reg2
+	eu.sourceRegister2Dec, _ = strconv.ParseInt(eu.sourceRegister2Bin, 2, 64)
+}
+
+func (eu *ExecuteUnit) SetValueInstruction(value string){
+	eu.valueInstructionBin = value
+	eu.valueInstructionDec, _ = strconv.ParseInt(eu.valueInstructionBin, 2, 64)
+}
+
+func (eu *ExecuteUnit) SetValueRegister(value_reg string){
+	eu.valueRegisterBin = value_reg
+	eu.valueRegisterDec, _ = strconv.ParseInt(eu.valueRegisterBin, 2, 64)
+}
+
+func (eu *ExecuteUnit) GetTargetRegisterDec()int64{
+	return eu.targetRegisterDec
+}
+
+func (eu *ExecuteUnit) GetAddressInstructionDec()int64{
+	return eu.addressInstructionDec
+}
+
+func (eu *ExecuteUnit) GetSourceRegister1Dec()int64{
+	return eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) GetSourceRegister2Dec()int64{
+	return eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) GetValueInstructionDec()int64{
+	return eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) SetValueRegisterDec()int64{
+	return eu.valueRegisterDec
+}
+
 func (eu *ExecuteUnit) GetInstruction() string{
 	return eu.instruction
 }
 
-func (eu *ExecuteUnit) ConfigForLdr1(target_reg string, addr_reg string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(addr_reg, 2, 64)
-	eu.config["address_register"] = y
+func (eu *ExecuteUnit) ConfigForLdr1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
 }
 
 
-func (eu *ExecuteUnit) ConfigForLdr2(target_reg string, addr string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(addr, 2, 64)
-	eu.config["address"] = y
+func (eu *ExecuteUnit) ConfigForLdr2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["address"] = eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForStr1(target_reg string, addr_reg string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(addr_reg, 2, 64)
-	eu.config["address_register"] = y
+func (eu *ExecuteUnit) ConfigForStr1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
 }
 
-func (eu *ExecuteUnit) ConfigForStr2(target_reg string, addr string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(addr, 2, 64)
-	eu.config["address"] = y
+func (eu *ExecuteUnit) ConfigForStr2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["address"] = eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForAdds1(target_reg string, source_reg1 string, source_reg2 string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg1, 2, 64)
-	eu.config["source_register1"] = y
-
-	z, _ := strconv.ParseInt(source_reg2, 2, 64)
-	eu.config["source_register2"] = z
+func (eu *ExecuteUnit) ConfigForAdds1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForAdds2(target_reg string, source_reg string, value string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg, 2, 64)
-	eu.config["source_register"] = y
-
-	z, _ := strconv.ParseInt(value, 2, 64)
-	eu.config["value"] = z
+func (eu *ExecuteUnit) ConfigForAdds2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForSubs1(target_reg string, source_reg1 string, source_reg2 string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg1, 2, 64)
-	eu.config["source_register1"] = y
-
-	z, _ := strconv.ParseInt(source_reg2, 2, 64)
-	eu.config["source_register2"] = z
+func (eu *ExecuteUnit) ConfigForSubs1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForSubs2(target_reg string, source_reg string, value string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg, 2, 64)
-	eu.config["source_register"] = y
-
-	z, _ := strconv.ParseInt(value, 2, 64)
-	eu.config["value"] = z
+func (eu *ExecuteUnit) ConfigForSubs2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForAnds1(target_reg string, source_reg1 string, source_reg2 string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg1, 2, 64)
-	eu.config["source_register1"] = y
-
-	z, _ := strconv.ParseInt(source_reg2, 2, 64)
-	eu.config["source_register2"] = z
+func (eu *ExecuteUnit) ConfigForAnds1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForAnds2(target_reg string, source_reg string, value string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(source_reg, 2, 64)
-	eu.config["source_register"] = y
-
-	z, _ := strconv.ParseInt(value, 2, 64)
-	eu.config["value"] = z
+func (eu *ExecuteUnit) ConfigForAnds2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForMovs1(target_reg string, value_reg string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
-
-	y, _ := strconv.ParseInt(value_reg, 2, 64)
-	eu.config["value_register"] = y
+func (eu *ExecuteUnit) ConfigForMovs1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["value_register"] = eu.valueRegisterDec
 }
 
-func (eu *ExecuteUnit) ConfigForMovs2(target_reg string, value string){
-	x, _ := strconv.ParseInt(target_reg, 2, 64)
-	eu.config["target_register"] = x
+func (eu *ExecuteUnit) ConfigForMovs2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["value"] = eu.valueInstructionDec
+}
 
-	y, _ := strconv.ParseInt(value, 2, 64)
-	eu.config["value"] = y
+func (eu *ExecuteUnit) ConfigInstruction(inst string, type_inst string){
+	x := [2]string{inst, type_inst}
+	eu.functionInstructionMap[x]()
+}
+
+func (eu *ExecuteUnit) SetFunctionForConfigFormat(format string, value string){
+	eu.instructionFormatMap[format](value)
 }

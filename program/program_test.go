@@ -184,7 +184,26 @@ func TestInitializeIo(t *testing.T){
 }
 
 //-----------------------------------------------------------------------------------
-// Execução do programa
+// Program execution
+//-----------------------------------------------------------------------------------
+func TestExecuteLdr2(t *testing.T){
+
+}
+
+func TestExecuteAdds1(t *testing.T){
+
+}
+
+func TestExecuteSubs1(t *testing.T){
+
+}
+
+func TestExecuteStr2(t *testing.T){
+
+}
+
+//-----------------------------------------------------------------------------------
+// Json generates
 //-----------------------------------------------------------------------------------
 
 func TestBuildCodeMemmoryJson(t *testing.T){

@@ -10,7 +10,74 @@ import(
 )
 
 var sim Simulator
+var st Step
 
+// ---------------------------------------------------------------------------------------
+// Tests about steps
+// ---------------------------------------------------------------------------------------
+func TestSetStepOnStep(t *testing.T){
+	want := "1"
+	st.SetStepOnStep("1")
+	got := st.step 
+
+	if want != got{
+		t.Errorf("SetStepOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetCodeMemmoryOnStep(t *testing.T){
+	want := "teste"
+	st.SetCodeMemmoryOnStep("teste")
+	got := st.code_memmory
+
+	if want != got{
+		t.Errorf("SetCodeMemmoryOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetDataMemmoryOnStep(t *testing.T){
+	want := "teste"
+	st.SetDataMemmoryOnStep("teste")
+	got := st.data_memmory
+
+	if want != got{
+		t.Errorf("SetDataMemmoryOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetDeviceMemmoryOnStep(t *testing.T){
+	want := "teste"
+	st.SetDeviceMemmoryOnStep("teste")
+	got := st.device_memmory
+
+	if want != got{
+		t.Errorf("SetDeviceMemmoryOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetRegisterBankOnStep(t *testing.T){
+	want := "teste"
+	st.SetRegisterBankOnStep("teste")
+	got := st.register_bank
+
+	if want != got{
+		t.Errorf("SetRegisterBankOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetCurrentInstructionOnStep(t *testing.T){
+	want := "10111001010100001010100001011010"
+	st.SetCurrentInstructionOnStep("10111001010100001010100001011010")
+	got := st.current_instruction
+
+	if want != got{
+		t.Errorf("SetCurrentInstructionOnStep \n got: %v \n want %v \n", got, want)
+	}
+}
+
+// ---------------------------------------------------------------------------------------
+// Tests about simulation
+// ---------------------------------------------------------------------------------------
 func TestRunProgram(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string

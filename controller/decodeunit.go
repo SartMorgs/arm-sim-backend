@@ -142,10 +142,18 @@ func (dc *DecodeUnit) SplitInstruction(){
 	}
 }
 
+func (dc *DecodeUnit) GetInstruction() string{
+	return dc.instructionCode
+}
+
 func (dc *DecodeUnit) GetInstructionFormat() map[string]string{
 	return dc.instructionFormat
 }
 
 func (dc *DecodeUnit) GetInstructionName() string{
 	return dc.instructionName
+}
+
+func (dc *DecodeUnit) GetInstructionType2() string{
+	return dc.instructionType2
 }
