@@ -1,6 +1,8 @@
 package program
 
 import(
+	"strconv"
+
 	"arm/memmory"
 	"arm/registerbank"
 	"arm/ula"
@@ -49,17 +51,17 @@ func NewProgram(rom *memmory.CodeMemmory) *Program{
 	program.deviceList = make(map[string]*io.Device)
 	program.deviceList["standard"] = io.NewDevice("standard", "0x0", "00000000000000000000000000000000")
 
-	/*
+	
 	program.behaviorInstruction = map[[2]string]func(){
 		// Arithmetic
-		{"ADDS", "1"}: executeunit.ConfigForAdds1,
-		{"ADDS", "2"}: executeunit.ConfigForAdds2,
-		{"SUBS", "1"}: executeunit.ConfigForSubs1,
-		{"SUBS", "2"}: executeunit.ConfigForSubs2,
+		{"ADDS", "1"}: program.ExecuteAdds1,
+		//{"ADDS", "2"}: program.ExecuteAdds2,
+		{"SUBS", "1"}: program.ExecuteSubs1,
+		//{"SUBS", "2"}: program.ExecuteSubs2,
 		//{"MULS", "1"}: executeunit.ConfigForMuls1,
 		//{"MULS", "2"}: executeunit.ConfigForMuls2,
-		{"ANDS", "1"}: executeunit.ConfigForAnds1,
-		{"ANDS", "2"}: executeunit.ConfigForAnds2,
+		//{"ANDS", "1"}: program.ExecuteAnds1,
+		//{"ANDS", "2"}: program.ExecuteAnds2,
 		//{"ORRS", "1"}: executeunit.ConfigForOrrs1,
 		//{"ORRS", "2"}: executeunit.ConfigForOrrs2,
 		//{"EORS", "1"}: executeunit.ConfigForEors1,
@@ -82,8 +84,8 @@ func NewProgram(rom *memmory.CodeMemmory) *Program{
 		//{"CMP", "2"}: executeunit.ConfigForCmp2,
 
 		// Bypass
-		{"MOVS", "1"}: executeunit.ConfigForMovs1,
-		{"MOVS", "2"}: executeunit.ConfigForMovs2,
+		//{"MOVS", "1"}: program.ExecuteMovs1,
+		//{"MOVS", "2"}: program.ExecuteMovs2,
 		//{"BEQ", "1"}: executeunit.ConfigForBeq1,
 		//{"BEQ", "2"}: executeunit.ConfigForBeq2,
 		//{"BNE", "1"}: executeunit.ConfigForBne1,
@@ -96,15 +98,15 @@ func NewProgram(rom *memmory.CodeMemmory) *Program{
 		//{"BX", "2"}: executeunit.ConfigForBx2,
 
 		// Load and Store
-		{"LDR", "1"}: executeunit.ConfigForLdr1,
-		{"LDR", "2"}: executeunit.ConfigForLdr2,
-		{"STR", "1"}: executeunit.ConfigForStr1,
-		{"STR", "2"}: executeunit.ConfigForStr2,
+		//{"LDR", "1"}: program.ExecuteLdr1,
+		{"LDR", "2"}: program.ExecuteLdr2,
+		//{"STR", "1"}: program.ExecuteStr1,
+		{"STR", "2"}: program.ExecuteStr2,
 
 		// Nothing
 		//{"NOP", "1"}: executeunit.ConfigForNop,
 	}
-	*/
+	
 
 	return program
 }
@@ -143,4 +145,47 @@ func (p *Program) GetInterruptionBank() *interruption.InterruptionBank{
 
 func (p *Program) GetDevice(name string) *io.Device{
 	return p.deviceList[name]
+}
+
+func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string){
+	x := [2]string{inst, type_inst}
+	p.behaviorInstruction[x]()
+}
+
+func (p *Program) ExecuteLdr2(){
+	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
+	address := pr.controller.GetExecuteUnit().GetAddressInstructionDec()
+	pr.registerBank.ChangeRegister(target_register, int(address))
+}
+
+func (p *Program) ExecuteAdds1(){
+	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
+	source_register1 := pr.controller.GetExecuteUnit().GetSourceRegister1Bin()
+	source_register2 := pr.controller.GetExecuteUnit().GetSourceRegister2Bin()
+	value_reg1 := pr.registerBank.GetRegisterBank()[source_register1].GetDecValue()
+	value_reg2 := pr.registerBank.GetRegisterBank()[source_register2].GetDecValue()
+	pr.ula.SetValue1(value_reg1)
+	pr.ula.SetValue2(value_reg2)
+	result := pr.ula.Add()
+	pr.registerBank.ChangeRegister(target_register, result)
+}
+
+func (p *Program) ExecuteSubs1(){
+	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
+	source_register1 := pr.controller.GetExecuteUnit().GetSourceRegister1Bin()
+	source_register2 := pr.controller.GetExecuteUnit().GetSourceRegister2Bin()
+	value_reg1 := pr.registerBank.GetRegisterBank()[source_register1].GetDecValue()
+	value_reg2 := pr.registerBank.GetRegisterBank()[source_register2].GetDecValue()
+	pr.ula.SetValue1(value_reg1)
+	pr.ula.SetValue2(value_reg2)
+	result := pr.ula.Sub()
+	pr.registerBank.ChangeRegister(target_register, result)
+}
+
+func (p *Program) ExecuteStr2(){
+	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
+	address := pr.controller.GetExecuteUnit().GetAddressInstructionDec()
+	value_register := pr.registerBank.GetRegisterBank()[target_register].GetDecValue()
+	address_hex := strconv.FormatInt(int64(address), 16)
+	pr.ram.ChangeField(address_hex, value_register)
 }

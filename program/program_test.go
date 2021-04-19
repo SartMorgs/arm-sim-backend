@@ -5,7 +5,7 @@ import (
 	"arm/registerbank"
 	"arm/ula"
 	"arm/programcounter"
-	"arm/controller"
+	//"arm/controller"
 	"arm/interruption"
 	"arm/io"
 
@@ -132,7 +132,7 @@ func TestInitializeProgramCounter(t *testing.T){
 		t.Errorf("Initialize Program Counter \n got: %v \n want %v \n", got, want)
 	}
 }
-
+/*
 func TestInitializeController(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -148,7 +148,7 @@ func TestInitializeController(t *testing.T){
 	if !reflect.DeepEqual(want, got){
 		t.Errorf("Initialize Controller \n got: %v \n want %v \n", got, want)
 	}
-}
+}*/
 
 func TestInitializeInterruptionBank(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
@@ -186,20 +186,63 @@ func TestInitializeIo(t *testing.T){
 //-----------------------------------------------------------------------------------
 // Program execution
 //-----------------------------------------------------------------------------------
-func TestExecuteLdr2(t *testing.T){
+func TestExecuteFunctionForInstruction(t *testing.T){
+	// LDR
+	want := 70
+	pr.ExecuteFunctionForInstruction("LDR", "2")
+	got := pr.GetRegisterBank().GetRegisterBank()["00101"].GetDecValue()
 
+	if got != want{
+		t.Errorf("ExecuteFunctionForInstruction \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteLdr2(t *testing.T){
+	// LDR 5, #70
+	want := 70
+	pr.ExecuteLdr2()
+	got := pr.GetRegisterBank().GetRegisterBank()["00101"].GetDecValue()
+
+	if got != want{
+		t.Errorf("ExecuteLdr2 \n got: %v \n want %v \n", got, want)
+	}
 }
 
 func TestExecuteAdds1(t *testing.T){
+	// ADDS 4, 5, 1
+	want := 78
+	pr.GetRegisterBank().GetRegisterBank()["00101"].SetValue(70)
+	pr.GetRegisterBank().GetRegisterBank()["00001"].SetValue(8)
+	pr.ExecuteAdds1()
+	got := pr.GetRegisterBank().GetRegisterBank()["00100"].GetDecValue()
 
+	if got != want{
+		t.Errorf("ExecuteAdds1 \n got: %v \n want %v \n", got, want)
+	}
 }
 
 func TestExecuteSubs1(t *testing.T){
+	// SUBS 7, 5, 1
+	want := 62
+	pr.GetRegisterBank().GetRegisterBank()["00101"].SetValue(70)
+	pr.GetRegisterBank().GetRegisterBank()["00001"].SetValue(8)
+	pr.ExecuteSubs1()
+	got := pr.GetRegisterBank().GetRegisterBank()["00110"].GetDecValue()
 
+	if got != want{
+		t.Errorf("ExecuteSubs1 \n got: %v \n want %v \n", got, want)
+	}
 }
 
 func TestExecuteStr2(t *testing.T){
+	// STR 4, #1
+	want := 1
+	pr.ExecuteStr2()
+	got := pr.GetDataMemmory().GetDataMemmoryList()["0x4"].GetDecValue()
 
+	if got != want{
+		t.Errorf("ExecuteStr2 \n got: %v \n want %v \n", got, want)
+	}
 }
 
 //-----------------------------------------------------------------------------------

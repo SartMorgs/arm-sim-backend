@@ -92,4 +92,6 @@ func (s *Simulator) ExecuteInstruction(){
 		s.prog.controller.GetExecuteUnit().SetFunctionForConfigFormat(k, v)
 	}
 	s.prog.controller.GetExecuteUnit().ConfigInstruction(s.current_type_instruction[0], s.current_type_instruction[1])	
+
+	s.prog.ExecuteFunctionForInstruction(current_instruction_alias, s.current_type_instruction[1])
 }

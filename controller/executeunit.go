@@ -139,28 +139,52 @@ func (eu *ExecuteUnit) SetValueRegister(value_reg string){
 	eu.valueRegisterDec, _ = strconv.ParseInt(eu.valueRegisterBin, 2, 64)
 }
 
-func (eu *ExecuteUnit) GetTargetRegisterDec()int64{
+func (eu *ExecuteUnit) GetTargetRegisterDec() int64{
 	return eu.targetRegisterDec
 }
 
-func (eu *ExecuteUnit) GetAddressInstructionDec()int64{
+func (eu *ExecuteUnit) GetTargetRegisterBin() string{
+	return eu.targetRegisterBin
+}
+
+func (eu *ExecuteUnit) GetAddressInstructionDec() int64{
 	return eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) GetSourceRegister1Dec()int64{
+func (eu *ExecuteUnit) GetAddressInstructionBin() string{
+	return eu.addressInstructionBin
+}
+
+func (eu *ExecuteUnit) GetSourceRegister1Dec() int64{
 	return eu.sourceRegister1Dec
 }
 
-func (eu *ExecuteUnit) GetSourceRegister2Dec()int64{
+func (eu *ExecuteUnit) GetSourceRegister1Bin() string{
+	return eu.sourceRegister1Bin
+}
+
+func (eu *ExecuteUnit) GetSourceRegister2Dec() int64{
 	return eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) GetValueInstructionDec()int64{
+func (eu *ExecuteUnit) GetSourceRegister2Bin() string{
+	return eu.sourceRegister2Bin
+}
+
+func (eu *ExecuteUnit) GetValueInstructionDec() int64{
 	return eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) SetValueRegisterDec()int64{
+func (eu *ExecuteUnit) GetValueInstructionBin() string{
+	return eu.valueInstructionBin
+}
+
+func (eu *ExecuteUnit) GetValueRegisterDec() int64{
 	return eu.valueRegisterDec
+}
+
+func (eu *ExecuteUnit) GetValueRegisterBin() string{
+	return eu.valueRegisterBin
 }
 
 func (eu *ExecuteUnit) GetInstruction() string{
