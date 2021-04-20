@@ -1,12 +1,12 @@
 package program
 
 import(
-	//"arm/memmory"
-	//"arm/registerbank"
+	"arm/memmory"
+	"arm/registerbank"
 
-	//"strconv"
+	"strconv"
 	"testing"
-	//"encoding/json"
+	"encoding/json"
 )
 
 var sim Simulator
@@ -78,7 +78,7 @@ func TestSetCurrentInstructionOnStep(t *testing.T){
 // ---------------------------------------------------------------------------------------
 // Tests about simulation
 // ---------------------------------------------------------------------------------------
-/*
+
 func TestRunProgram(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -134,4 +134,3 @@ func TestRunProgram(t *testing.T){
 		t.Errorf("GetJsonSimulation \n got: %v \n want %v \n", got, want)
 	}
 }
-*/

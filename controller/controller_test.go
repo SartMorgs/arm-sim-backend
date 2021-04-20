@@ -267,8 +267,6 @@ func TestGetInstructionName(t *testing.T){
 // Tests about execute unit
 // ---------------------------------------------------------------------------------------
 
-// REFAZER OS TESTES DE EXECUTE UNIT
-// MUDAR AS FUNÇÕES DE CONFIG PARA INSTRUÇÃO
 func TestConfigForLdr1(t *testing.T){
 	cn := NewController()
 

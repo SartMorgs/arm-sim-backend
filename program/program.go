@@ -147,45 +147,53 @@ func (p *Program) GetDevice(name string) *io.Device{
 	return p.deviceList[name]
 }
 
-func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string){
-	x := [2]string{inst, type_inst}
-	p.behaviorInstruction[x]()
-}
-
 func (p *Program) ExecuteLdr2(){
-	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
-	address := pr.controller.GetExecuteUnit().GetAddressInstructionDec()
-	pr.registerBank.ChangeRegister(target_register, int(address))
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	p.registerBank.ChangeRegister(target_register_r, int(address))
 }
 
 func (p *Program) ExecuteAdds1(){
-	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
-	source_register1 := pr.controller.GetExecuteUnit().GetSourceRegister1Bin()
-	source_register2 := pr.controller.GetExecuteUnit().GetSourceRegister2Bin()
-	value_reg1 := pr.registerBank.GetRegisterBank()[source_register1].GetDecValue()
-	value_reg2 := pr.registerBank.GetRegisterBank()[source_register2].GetDecValue()
-	pr.ula.SetValue1(value_reg1)
-	pr.ula.SetValue2(value_reg2)
-	result := pr.ula.Add()
-	pr.registerBank.ChangeRegister(target_register, result)
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Add()
+	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
 func (p *Program) ExecuteSubs1(){
-	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
-	source_register1 := pr.controller.GetExecuteUnit().GetSourceRegister1Bin()
-	source_register2 := pr.controller.GetExecuteUnit().GetSourceRegister2Bin()
-	value_reg1 := pr.registerBank.GetRegisterBank()[source_register1].GetDecValue()
-	value_reg2 := pr.registerBank.GetRegisterBank()[source_register2].GetDecValue()
-	pr.ula.SetValue1(value_reg1)
-	pr.ula.SetValue2(value_reg2)
-	result := pr.ula.Sub()
-	pr.registerBank.ChangeRegister(target_register, result)
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Sub()
+	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
 func (p *Program) ExecuteStr2(){
-	target_register := pr.controller.GetExecuteUnit().GetTargetRegisterBin()
-	address := pr.controller.GetExecuteUnit().GetAddressInstructionDec()
-	value_register := pr.registerBank.GetRegisterBank()[target_register].GetDecValue()
-	address_hex := strconv.FormatInt(int64(address), 16)
-	pr.ram.ChangeField(address_hex, value_register)
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	value_register := p.registerBank.GetRegisterBank()[target_register_r].GetDecValue()
+	address_hex := "0x" + strconv.FormatInt(int64(address), 16)
+	p.ram.ChangeField(address_hex, value_register)
+}
+
+func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string){
+	x := [2]string{inst, type_inst}
+	p.behaviorInstruction[x]()
 }

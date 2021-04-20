@@ -95,3 +95,7 @@ func (s *Simulator) ExecuteInstruction(){
 
 	s.prog.ExecuteFunctionForInstruction(current_instruction_alias, s.current_type_instruction[1])
 }
+
+func (s *Simulator) GetJsonSimulation(){
+
+}
