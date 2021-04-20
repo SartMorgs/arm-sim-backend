@@ -10,7 +10,10 @@ type Step struct{
 	data_memmory string
 	device_memmory string
 	register_bank string
-	current_instruction string
+	current_instruction_fetch string
+	current_instruction_decode string
+	current_instruction_execute string
+	current_address_fetch string
 }
 
 type Simulator struct{
@@ -19,6 +22,11 @@ type Simulator struct{
 	current_mapinstruction map[string]string
 	current_type_instruction [2]string
 	json_steps map[int]*Step
+	max_step_size int
+	current_instruction_fetch string
+	current_instruction_decode string
+	current_instruction_execute string
+	current_address_fetch string
 }
 
 // Step's functions
@@ -42,8 +50,12 @@ func (st *Step) SetRegisterBankOnStep(reg_bank string){
 	st.register_bank = reg_bank
 }
 
-func (st *Step) SetCurrentInstructionOnStep(inst string){
-	st.current_instruction = inst
+func (s *Simulator) SetMaxStepSize(max_step int){
+	s.max_step_size = max_step
+}
+
+func (s *Simulator) GetMaxStepSize() int{
+	return s.max_step_size
 }
 
 // Realizar simulação
@@ -54,6 +66,7 @@ func NewSimulation(prog *Program) *Simulator{
 	simulation.current_step = 0
 	simulation.current_mapinstruction = make(map[string]string)
 	simulation.json_steps = make(map[int]*Step)
+	simulation.max_step_size = 1000
 
 	return simulation
 }
@@ -64,26 +77,25 @@ func (s *Simulator) NextStep(){
 
 func (s *Simulator) FetchInstruction(){
 	s.NextStep()
-	current_address := s.prog.pc.GetHexAddressMemmory()
-	current_instruction := s.prog.rom.GetRomList()[current_address].GetAddress()
-	current_program_area := s.prog.rom.GetRomList()[current_address].GetAliasField()
-	s.json_steps[s.current_step].SetCurrentInstructionOnStep(current_instruction)
-	s.prog.controller.ChangeInstructionFetch(current_instruction)
+	s.current_address_fetch = s.prog.pc.GetHexAddressMemmory()
+	s.current_instruction_fetch = s.prog.rom.GetRomList()[s.current_address_fetch].GetAddress()
+	current_program_area := s.prog.rom.GetRomList()[s.current_address_fetch].GetAliasField()
+	s.prog.controller.ChangeInstructionFetch(s.current_instruction_fetch)
 	s.prog.controller.GetFetchUnit().SetProgramArea(current_program_area)
 }
 
 func (s *Simulator) DecodeInstruction(){
-	current_instruction := s.prog.controller.GetFetchUnit().GetInstruction()
-	s.prog.controller.ChangeInstructionDecode(current_instruction)
+	s.current_instruction_decode = s.prog.controller.GetFetchUnit().GetInstruction()
+	s.prog.controller.ChangeInstructionDecode(s.current_instruction_decode)
 	s.prog.controller.GetDecodeUnit().MapInstruction()
 	s.prog.controller.GetDecodeUnit().SplitInstruction()
 	s.current_mapinstruction = s.prog.controller.GetDecodeUnit().GetInstructionFormat()
 }
 
 func (s *Simulator) ExecuteInstruction(){
-	current_instruction_code := s.prog.controller.GetDecodeUnit().GetInstruction()
+	s.current_instruction_execute = s.prog.controller.GetDecodeUnit().GetInstruction()
 	current_instruction_alias := s.prog.controller.GetDecodeUnit().GetInstructionName()
-	s.prog.controller.ChangeInstructionExecute(current_instruction_code)
+	s.prog.controller.ChangeInstructionExecute(s.current_instruction_execute)
 
 	s.current_type_instruction[0] = s.prog.controller.GetDecodeUnit().GetInstructionName()
 	s.current_type_instruction[1] = s.prog.controller.GetDecodeUnit().GetInstructionType2()
@@ -94,6 +106,13 @@ func (s *Simulator) ExecuteInstruction(){
 	s.prog.controller.GetExecuteUnit().ConfigInstruction(s.current_type_instruction[0], s.current_type_instruction[1])	
 
 	s.prog.ExecuteFunctionForInstruction(current_instruction_alias, s.current_type_instruction[1])
+}
+
+func (s *Simulator) Simulation(){
+	// While simulation in execution
+	for s.current_step < s.max_step_size || s.current_instruction_fetch != "0x3000"{
+
+	}
 }
 
 func (s *Simulator) GetJsonSimulation(){

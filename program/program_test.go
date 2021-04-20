@@ -5,7 +5,7 @@ import (
 	"arm/registerbank"
 	"arm/ula"
 	"arm/programcounter"
-	//"arm/controller"
+	"arm/controller"
 	"arm/interruption"
 	"arm/io"
 
@@ -132,7 +132,7 @@ func TestInitializeProgramCounter(t *testing.T){
 		t.Errorf("Initialize Program Counter \n got: %v \n want %v \n", got, want)
 	}
 }
-/*
+
 func TestInitializeController(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -148,7 +148,7 @@ func TestInitializeController(t *testing.T){
 	if !reflect.DeepEqual(want, got){
 		t.Errorf("Initialize Controller \n got: %v \n want %v \n", got, want)
 	}
-}*/
+}
 
 func TestInitializeInterruptionBank(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()

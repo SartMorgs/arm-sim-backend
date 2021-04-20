@@ -64,20 +64,29 @@ func TestSetRegisterBankOnStep(t *testing.T){
 		t.Errorf("SetRegisterBankOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
-
-func TestSetCurrentInstructionOnStep(t *testing.T){
-	want := "10111001010100001010100001011010"
-	st.SetCurrentInstructionOnStep("10111001010100001010100001011010")
-	got := st.current_instruction
-
-	if want != got{
-		t.Errorf("SetCurrentInstructionOnStep \n got: %v \n want %v \n", got, want)
-	}
-}
-
 // ---------------------------------------------------------------------------------------
 // Tests about simulation
 // ---------------------------------------------------------------------------------------
+
+func TestSetMaxStepSize(t *testing.T){
+	want := 2000
+	sim.SetMaxStepSize(2000)
+	got := sim.max_step_size
+
+	if want != got{
+		t.Errorf("SetMaxStepSize \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetMaxStepSize(t *testing.T){
+	want := 2000
+	sim.max_step_size = 2000
+	got := sim.GetMaxStepSize()
+
+	if want != got{
+		t.Errorf("GetMaxStepSize \n got: %v \n want %v \n", got, want)
+	}
+}
 
 func TestRunProgram(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
