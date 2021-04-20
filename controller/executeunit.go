@@ -6,9 +6,6 @@ type ConfigForInstruction struct{
 	targetRegisterBin string
 	targetRegisterDec int64
 
-	addressRegisterBin string
-	addressRegisterDec int64
-
 	addressInstructionBin string
 	addressInstructionDec int64
 

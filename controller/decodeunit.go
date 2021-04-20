@@ -9,6 +9,7 @@ type DecodeUnit struct{
 	instructionName string
 	instructionFormat map[string]string
 	opcode string
+	gapAddress bool
 }
 
 func NewDecodeUnit() *DecodeUnit{
@@ -69,6 +70,7 @@ func NewDecodeUnit() *DecodeUnit{
 		"111111": {"NOP", "Nothing", "1"},
 	}
 
+	decodeunit.gapAddress = false
 	decodeunit.instructionCode = ""
 	decodeunit.instructionType1 = ""
 	decodeunit.instructionType2 = ""
@@ -83,6 +85,10 @@ func (it *DecodeUnit) SetInstruction(inst string){
 
 func (dc *DecodeUnit) GetOpcode() string{
 	return dc.opcode
+}
+
+func (dc *DecodeUnit) GetGapAddressFlag() bool{
+	return dc.gapAddress
 }
 
 func (dc *DecodeUnit) MapInstruction(){
@@ -104,6 +110,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 
 	// Verify what's type of instruction
 	if dc.instructionType1 == "Arithmetic"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["rn"] = string(instructionRune[11:16])
@@ -114,6 +121,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["data"] = string(instructionRune[16:32])
 		}
 	} else if dc.instructionType1 == "Comparison"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rn"] = string(instructionRune[6:11])
 			dc.instructionFormat["rm"] = string(instructionRune[11:16])
@@ -122,12 +130,14 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["imediato"] = string(instructionRune[11:19])
 		}
 	} else if dc.instructionType1 == "Bypass"{
+		dc.gapAddress = true
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rn"] = string(instructionRune[6:11])
 		} else{
 			dc.instructionFormat["label"] = string(instructionRune[6:32])
 		}
 	} else if dc.instructionType1 == "Load" || dc.instructionType1 == "Store"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["rn"] = string(instructionRune[11:16])
@@ -136,8 +146,10 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["address"] = string(instructionRune[11:25])
 		}
 	} else if dc.instructionType1 == "Nop"{
+		dc.gapAddress = false
 		dc.instructionFormat["rest"] = ""
 	} else{
+		dc.gapAddress = false
 		dc.instructionFormat["instruction"] = dc.instructionCode
 	}
 }

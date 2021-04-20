@@ -26,16 +26,6 @@ func TestSetTargetRegister(t *testing.T){
 	}
 }
 
-func TestSetAddressRegister(t *testing.T){
-	want := "00101"
-	exun.SetAddressRegister("00101")
-	got := exun.addressRegisterBin
-
-	if want != got{
-		t.Errorf("SetAddressRegister \n got: %v want %v \n", got, want)
-	}
-}
-
 func TestSetAddressInstruction(t *testing.T){
 	want := "00000001000110"
 	exun.SetAddressInstruction("00000001000110")
