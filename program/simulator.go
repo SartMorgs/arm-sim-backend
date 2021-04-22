@@ -1,7 +1,9 @@
 package program
 
 import(
-	//"encoding/json"
+	"encoding/json"
+	"strings"
+	"strconv"
 )
 
 type Step struct{
@@ -21,12 +23,30 @@ type Simulator struct{
 	current_step int
 	current_mapinstruction map[string]string
 	current_type_instruction [2]string
-	json_steps map[int]*Step
+	stepList map[int]*Step
+	jsonStepList map[int]string
 	max_step_size int
 	current_instruction_fetch string
 	current_instruction_decode string
 	current_instruction_execute string
 	current_address_fetch string
+	current_address_decode string
+	current_address_execute string
+}
+
+func NewStep(stp string, cdmem string, dtmem string, dvmem string, rgbank string, finst string, dinst string, einst string, addr string) *Step{
+	step := new(Step)
+	step.step = stp
+	step.code_memmory = cdmem
+	step.data_memmory = dtmem
+	step.device_memmory = dvmem
+	step.register_bank = rgbank 
+	step.current_instruction_fetch = finst
+	step.current_instruction_decode = dinst 
+	step.current_instruction_execute = einst
+	step.current_address_fetch = addr
+
+	return step
 }
 
 // Step's functions
@@ -65,8 +85,15 @@ func NewSimulation(prog *Program) *Simulator{
 	simulation.prog = prog
 	simulation.current_step = 0
 	simulation.current_mapinstruction = make(map[string]string)
-	simulation.json_steps = make(map[int]*Step)
-	simulation.max_step_size = 1000
+	simulation.stepList = make(map[int]*Step)
+	simulation.jsonStepList = make(map[int]string)
+
+	simulation.max_step_size = (12 * 1024)
+
+	for count := 0; count < simulation.max_step_size; count++{
+		simulation.stepList[count] = NewStep("", "", "", "", "", "", "", "", "")
+		simulation.jsonStepList[count] = ""
+	}
 
 	return simulation
 }
@@ -85,6 +112,7 @@ func (s *Simulator) FetchInstruction(){
 }
 
 func (s *Simulator) DecodeInstruction(){
+	s.current_address_decode = s.current_address_fetch
 	s.current_instruction_decode = s.prog.controller.GetFetchUnit().GetInstruction()
 	s.prog.controller.ChangeInstructionDecode(s.current_instruction_decode)
 	s.prog.controller.GetDecodeUnit().MapInstruction()
@@ -93,8 +121,11 @@ func (s *Simulator) DecodeInstruction(){
 }
 
 func (s *Simulator) ExecuteInstruction(){
+	s.current_address_execute = s.current_instruction_decode
 	s.current_instruction_execute = s.prog.controller.GetDecodeUnit().GetInstruction()
 	current_instruction_alias := s.prog.controller.GetDecodeUnit().GetInstructionName()
+	flag_address := s.prog.controller.GetDecodeUnit().GetGapAddressFlag()
+
 	s.prog.controller.ChangeInstructionExecute(s.current_instruction_execute)
 
 	s.current_type_instruction[0] = s.prog.controller.GetDecodeUnit().GetInstructionName()
@@ -106,15 +137,55 @@ func (s *Simulator) ExecuteInstruction(){
 	s.prog.controller.GetExecuteUnit().ConfigInstruction(s.current_type_instruction[0], s.current_type_instruction[1])	
 
 	s.prog.ExecuteFunctionForInstruction(current_instruction_alias, s.current_type_instruction[1])
+
+	// Next Address Program Counter
+	if !flag_address{
+		s.prog.pc.NextPointer()
+		next_address_hex := s.current_instruction_execute
+		next_address_int, _ := strconv.Atoi(strings.Replace(next_address_hex, "0x", "", 1))
+		s.prog.pc.SetAddressMemmory(next_address_int)
+	}
 }
 
 func (s *Simulator) Simulation(){
 	// While simulation in execution
 	for s.current_step < s.max_step_size || s.current_instruction_fetch != "0x3000"{
+		s.FetchInstruction()
+		s.DecodeInstruction()
+		s.ExecuteInstruction()
 
+		// Set Steps
+		s.stepList[s.current_step].step = strconv.FormatInt(int64(s.current_step), 10)
+		s.stepList[s.current_step].code_memmory = s.prog.GetCodeMemmory().GetCodeMemmoryJson()
+		s.stepList[s.current_step].data_memmory = s.prog.GetDataMemmory().GetDataMemmoryJson()
+		s.stepList[s.current_step].device_memmory = s.prog.GetDeviceMemmory().GetDeviceMemmoryJson()
+		s.stepList[s.current_step].register_bank = s.prog.GetRegisterBank().GetRegisterBankJson()
+		s.stepList[s.current_step].current_instruction_fetch = s.current_instruction_fetch
+		s.stepList[s.current_step].current_instruction_decode = s.current_instruction_decode
+		s.stepList[s.current_step].current_instruction_execute = s.current_instruction_execute
+		s.stepList[s.current_step].current_address_fetch = s.current_address_fetch
+
+		s.jsonStepList[s.current_step] = s.GetStepJson(s.current_step)
 	}
 }
 
-func (s *Simulator) GetJsonSimulation(){
+func (s *Simulator) GetStepJson(step int) string{
+	step_for_json := map[string]string{
+		"step": s.stepList[step].step,
+		"code_memmory": s.stepList[step].code_memmory,
+		"data_memmory": s.stepList[step].data_memmory,
+		"device_memmory": s.stepList[step].device_memmory,
+		"register_bank": s.stepList[step].register_bank,
+		"current_instruction_fetch": s.stepList[step].current_instruction_fetch,
+		"current_instruction_decode": s.stepList[step].current_instruction_decode,
+		"current_instruction_execute": s.stepList[step].current_instruction_execute,
+		"current_address_fetch": s.stepList[step].current_address_fetch}
 
+	jstep, _ := json.Marshal(step_for_json)
+	return string(jstep)
+}
+
+func (s *Simulator) GetJsonSimulation() string{
+	jsteps, _ := json.Marshal(s.jsonStepList)
+	return string(jsteps)
 }

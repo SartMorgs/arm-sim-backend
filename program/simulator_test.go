@@ -88,6 +88,53 @@ func TestGetMaxStepSize(t *testing.T){
 	}
 }
 
+func TestGetStepJson(t *testing.T){
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+	}
+	pr := NewProgram(rom_teste)
+	sim := NewSimulation(pr)
+
+	data_memmory := memmory.NewDataMemmory()
+	device_memmory := memmory.NewDeviceMemmory()
+	register_bank := registerbank.NewRegisterBank()
+
+	str_step1 := map[string]string{
+		"step": "2",
+		"code_memmory": rom_teste.GetCodeMemmoryJson(),
+		"data_memmory": data_memmory.GetDataMemmoryJson(),
+		"device_memmory": device_memmory.GetDeviceMemmoryJson(),
+		"register_bank": register_bank.GetRegisterBankJson(),
+		"current_instruction_fetch": "10010001010101011010100001011010",
+		"current_instruction_decode": "00110010000101011010100001011010",
+		"current_instruction_execute": "10110110101001001110100001011010",
+		"current_address_fetch": "0x2"}
+
+	jstep, _ := json.Marshal(str_step1)
+
+	want := string(jstep)
+
+	sim.stepList[2] = NewStep(
+		"2",
+		rom_teste.GetCodeMemmoryJson(),
+		data_memmory.GetDataMemmoryJson(),
+		device_memmory.GetDeviceMemmoryJson(),
+		register_bank.GetRegisterBankJson(),
+		"10010001010101011010100001011010",
+		"00110010000101011010100001011010",
+		"10110110101001001110100001011010",
+		"0x2")
+
+	got := sim.GetStepJson(2)
+
+	if got != want{
+		t.Errorf("GetStepJson \n got: %v \n want %v \n", got, want)
+	}
+}
+
 func TestRunProgram(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -128,7 +175,11 @@ func TestRunProgram(t *testing.T){
 			"code_memmory": rom_teste.GetCodeMemmoryJson(),
 			"data_memmory": data_memmory.GetDataMemmoryJson(),
 			"device_memmory": device_memmory.GetDeviceMemmoryJson(),
-			"register_bank": register_bank.GetRegisterBankJson()}
+			"register_bank": register_bank.GetRegisterBankJson(),
+			"current_instruction_fetch": pr.GetController().GetFetchUnit().GetInstruction(),
+			"current_instruction_decode": pr.GetController().GetDecodeUnit().GetInstruction(),
+			"current_instruction_execute": pr.GetController().GetExecuteUnit().GetInstruction(),
+			"current_address_fetch": addressMemmoryCode}
 
 		jstep, _ := json.Marshal(str_steps)
 
@@ -140,6 +191,6 @@ func TestRunProgram(t *testing.T){
 	got := sim.GetJsonSimulation()
 
 	if got != want{
-		t.Errorf("GetJsonSimulation \n got: %v \n want %v \n", got, want)
+		t.Errorf("GetJsonSimulation \n got: \n want \n")
 	}
 }

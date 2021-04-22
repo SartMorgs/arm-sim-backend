@@ -3,14 +3,14 @@ package program
 import (
 	"arm/memmory"
 	"arm/registerbank"
-	"arm/ula"
-	"arm/programcounter"
-	"arm/controller"
-	"arm/interruption"
-	"arm/io"
+	//"arm/ula"
+	//"arm/programcounter"
+	//"arm/controller"
+	//"arm/interruption"
+	//"arm/io"
 
 	"testing"
-	"reflect"
+	//"reflect"
 	"strconv"
 	"encoding/json"
 )
@@ -25,6 +25,7 @@ var test_program []string = []string{
 		"11010100111000000000000100000000"} // STR 7, #2
 var rom_teste *memmory.CodeMemmory
 
+/*
 func TestInitializeCodeMemmory(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -182,6 +183,7 @@ func TestInitializeIo(t *testing.T){
 		t.Errorf("Initialize Standard Device \n got: %v \n want %v \n", got, want)
 	}
 }
+*/
 
 //-----------------------------------------------------------------------------------
 // Program execution
