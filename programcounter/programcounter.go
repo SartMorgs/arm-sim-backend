@@ -55,6 +55,6 @@ func (pc *ProgramCounter) ResetPC(){
 	pc.currentPointer = 0;
 }
 
-func (pc *ProgramCounter) nextPointer(){
+func (pc *ProgramCounter) NextPointer(){
 	pc.currentPointer += 1
 }
