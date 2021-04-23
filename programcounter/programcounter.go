@@ -15,8 +15,8 @@ func NewProgramCounter() *ProgramCounter{
 	programcounter := new(ProgramCounter)
 	programcounter.currentPointer = 0
 	programcounter.decAddressMemmory = 0
-	programcounter.hexAddressMemmory = "0x0"
-	programcounter.binAddressMemmory = "00"
+	programcounter.hexAddressMemmory = "0x1000"
+	programcounter.binAddressMemmory = "1000000000000"
 
 	return programcounter
 }

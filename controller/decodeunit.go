@@ -71,7 +71,7 @@ func NewDecodeUnit() *DecodeUnit{
 	}
 
 	decodeunit.gapAddress = false
-	decodeunit.instructionCode = ""
+	decodeunit.instructionCode = "00000000000000000000000000000000"
 	decodeunit.instructionType1 = ""
 	decodeunit.instructionType2 = ""
 	decodeunit.instructionFormat = make(map[string]string)
@@ -147,10 +147,10 @@ func (dc *DecodeUnit) SplitInstruction(){
 		}
 	} else if dc.instructionType1 == "Nop"{
 		dc.gapAddress = false
-		dc.instructionFormat["rest"] = ""
+		dc.instructionFormat["rest"] = string(instructionRune[6:32])
 	} else{
 		dc.gapAddress = false
-		dc.instructionFormat["instruction"] = dc.instructionCode
+		dc.instructionFormat["rest"] = dc.instructionCode
 	}
 }
 

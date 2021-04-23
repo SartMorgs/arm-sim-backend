@@ -20,6 +20,9 @@ type ConfigForInstruction struct{
 
 	valueRegisterBin string
 	valueRegisterDec int64
+
+	restBin string
+	restDec int64
 }
 
 type ExecuteUnit struct{
@@ -86,7 +89,7 @@ func NewExecuteUnit() *ExecuteUnit{
 		{"STR", "2"}: executeunit.ConfigForStr2,
 
 		// Nothing
-		//{"NOP", "1"}: executeunit.ConfigForNop,
+		{"NOP", "1"}: executeunit.ConfigForNop,
 	}
 
 	executeunit.instructionFormatMap = map[string]func(string){
@@ -97,7 +100,10 @@ func NewExecuteUnit() *ExecuteUnit{
 		"imediato": executeunit.SetAddressInstruction,
 		"label": executeunit.SetValueInstruction,
 		"address": executeunit.SetAddressInstruction,
+		"rest": executeunit.SetRest,
 	}
+
+	executeunit.instruction = "00000000000000000000000000000000"
 
 	return executeunit
 }
@@ -134,6 +140,11 @@ func (eu *ExecuteUnit) SetValueInstruction(value string){
 func (eu *ExecuteUnit) SetValueRegister(value_reg string){
 	eu.valueRegisterBin = value_reg
 	eu.valueRegisterDec, _ = strconv.ParseInt(eu.valueRegisterBin, 2, 64)
+}
+
+func (eu * ExecuteUnit) SetRest(value_rest string){
+	eu.restBin = value_rest
+	eu.restDec, _ = strconv.ParseInt(eu.restBin, 2, 64)
 }
 
 func (eu *ExecuteUnit) GetTargetRegisterDec() int64{
@@ -253,6 +264,10 @@ func (eu *ExecuteUnit) ConfigForMovs1(){
 func (eu *ExecuteUnit) ConfigForMovs2(){
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForNop(){
+	eu.config["rest"] = eu.restDec
 }
 
 func (eu *ExecuteUnit) ConfigInstruction(inst string, type_inst string){

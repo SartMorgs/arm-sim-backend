@@ -104,7 +104,7 @@ func NewProgram(rom *memmory.CodeMemmory) *Program{
 		{"STR", "2"}: program.ExecuteStr2,
 
 		// Nothing
-		//{"NOP", "1"}: executeunit.ConfigForNop,
+		{"NOP", "1"}: program.ExecuteNop,
 	}
 	
 
@@ -196,4 +196,8 @@ func (p *Program) ExecuteStr2(){
 func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string){
 	x := [2]string{inst, type_inst}
 	p.behaviorInstruction[x]()
+}
+
+func (p *Program) ExecuteNop(){
+
 }

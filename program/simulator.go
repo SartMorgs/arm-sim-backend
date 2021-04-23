@@ -88,7 +88,7 @@ func NewSimulation(prog *Program) *Simulator{
 	simulation.stepList = make(map[int]*Step)
 	simulation.jsonStepList = make(map[int]string)
 
-	simulation.max_step_size = (12 * 1024)
+	simulation.max_step_size = 10
 
 	for count := 0; count < simulation.max_step_size; count++{
 		simulation.stepList[count] = NewStep("", "", "", "", "", "", "", "", "")
@@ -105,7 +105,7 @@ func (s *Simulator) NextStep(){
 func (s *Simulator) FetchInstruction(){
 	s.NextStep()
 	s.current_address_fetch = s.prog.pc.GetHexAddressMemmory()
-	s.current_instruction_fetch = s.prog.rom.GetRomList()[s.current_address_fetch].GetAddress()
+	s.current_instruction_fetch = s.prog.rom.GetRomList()[s.current_address_fetch].GetFullBinValue()
 	current_program_area := s.prog.rom.GetRomList()[s.current_address_fetch].GetAliasField()
 	s.prog.controller.ChangeInstructionFetch(s.current_instruction_fetch)
 	s.prog.controller.GetFetchUnit().SetProgramArea(current_program_area)
@@ -115,7 +115,6 @@ func (s *Simulator) DecodeInstruction(){
 	s.current_address_decode = s.current_address_fetch
 	s.current_instruction_decode = s.prog.controller.GetFetchUnit().GetInstruction()
 	s.prog.controller.ChangeInstructionDecode(s.current_instruction_decode)
-	s.prog.controller.GetDecodeUnit().MapInstruction()
 	s.prog.controller.GetDecodeUnit().SplitInstruction()
 	s.current_mapinstruction = s.prog.controller.GetDecodeUnit().GetInstructionFormat()
 }
@@ -145,11 +144,12 @@ func (s *Simulator) ExecuteInstruction(){
 		next_address_int, _ := strconv.Atoi(strings.Replace(next_address_hex, "0x", "", 1))
 		s.prog.pc.SetAddressMemmory(next_address_int)
 	}
+	s.current_mapinstruction = make(map[string]string)
 }
 
 func (s *Simulator) Simulation(){
 	// While simulation in execution
-	for s.current_step < s.max_step_size || s.current_instruction_fetch != "0x3000"{
+	for s.current_step < s.max_step_size || s.current_instruction_fetch != "0x10"{
 		s.FetchInstruction()
 		s.DecodeInstruction()
 		s.ExecuteInstruction()
