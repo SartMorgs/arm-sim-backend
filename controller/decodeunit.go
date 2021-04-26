@@ -67,7 +67,7 @@ func NewDecodeUnit() *DecodeUnit{
 		"110101": {"STR", "Store", "2"},
 
 		// Nothing
-		"111111": {"NOP", "Nothing", "1"},
+		"000000": {"NOP", "Nothing", "1"},
 	}
 
 	decodeunit.gapAddress = false
@@ -85,6 +85,12 @@ func (it *DecodeUnit) SetInstruction(inst string){
 
 func (dc *DecodeUnit) GetOpcode() string{
 	return dc.opcode
+}
+
+func (dc *DecodeUnit) getOpcode(inst string) string{
+	instructionRune := []rune(dc.instructionCode)
+	opcode := string(instructionRune[0:6])
+	return opcode
 }
 
 func (dc *DecodeUnit) GetGapAddressFlag() bool{
@@ -142,7 +148,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["rn"] = string(instructionRune[11:16])
 		} else{
-			dc.instructionFormat["rn"] = string(instructionRune[6:11])
+			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["address"] = string(instructionRune[11:25])
 		}
 	} else if dc.instructionType1 == "Nop"{

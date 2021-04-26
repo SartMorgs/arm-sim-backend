@@ -4,6 +4,7 @@ import(
 	"encoding/json"
 	"strings"
 	"strconv"
+	//"fmt"
 )
 
 type Step struct{
@@ -120,7 +121,7 @@ func (s *Simulator) DecodeInstruction(){
 }
 
 func (s *Simulator) ExecuteInstruction(){
-	s.current_address_execute = s.current_instruction_decode
+	s.current_address_execute = s.current_address_decode
 	s.current_instruction_execute = s.prog.controller.GetDecodeUnit().GetInstruction()
 	current_instruction_alias := s.prog.controller.GetDecodeUnit().GetInstructionName()
 	flag_address := s.prog.controller.GetDecodeUnit().GetGapAddressFlag()
@@ -140,32 +141,34 @@ func (s *Simulator) ExecuteInstruction(){
 	// Next Address Program Counter
 	if !flag_address{
 		s.prog.pc.NextPointer()
-		next_address_hex := s.current_instruction_execute
-		next_address_int, _ := strconv.Atoi(strings.Replace(next_address_hex, "0x", "", 1))
-		s.prog.pc.SetAddressMemmory(next_address_int)
+		next_address_hex := s.current_address_execute
+		next_address_string := strings.Replace(next_address_hex, "0x", "", 1)
+		next_address_int, _ := strconv.ParseInt(next_address_string, 16, 64)
+		s.prog.pc.SetAddressMemmory(int(next_address_int) + 1)
 	}
+
 	s.current_mapinstruction = make(map[string]string)
 }
 
 func (s *Simulator) Simulation(){
 	// While simulation in execution
-	for s.current_step < s.max_step_size || s.current_instruction_fetch != "0x10"{
+	for s.current_step < s.max_step_size{ //|| s.current_instruction_fetch != "0x10"{
 		s.FetchInstruction()
 		s.DecodeInstruction()
 		s.ExecuteInstruction()
 
 		// Set Steps
-		s.stepList[s.current_step].step = strconv.FormatInt(int64(s.current_step), 10)
-		s.stepList[s.current_step].code_memmory = s.prog.GetCodeMemmory().GetCodeMemmoryJson()
-		s.stepList[s.current_step].data_memmory = s.prog.GetDataMemmory().GetDataMemmoryJson()
-		s.stepList[s.current_step].device_memmory = s.prog.GetDeviceMemmory().GetDeviceMemmoryJson()
-		s.stepList[s.current_step].register_bank = s.prog.GetRegisterBank().GetRegisterBankJson()
-		s.stepList[s.current_step].current_instruction_fetch = s.current_instruction_fetch
-		s.stepList[s.current_step].current_instruction_decode = s.current_instruction_decode
-		s.stepList[s.current_step].current_instruction_execute = s.current_instruction_execute
-		s.stepList[s.current_step].current_address_fetch = s.current_address_fetch
+		s.stepList[s.current_step - 1].step = strconv.FormatInt(int64(s.current_step - 1), 10)
+		s.stepList[s.current_step - 1].code_memmory = s.prog.GetCodeMemmory().GetCodeMemmoryJson()
+		s.stepList[s.current_step - 1].data_memmory = s.prog.GetDataMemmory().GetDataMemmoryJson()
+		s.stepList[s.current_step - 1].device_memmory = s.prog.GetDeviceMemmory().GetDeviceMemmoryJson()
+		s.stepList[s.current_step - 1].register_bank = s.prog.GetRegisterBank().GetRegisterBankJson()
+		s.stepList[s.current_step - 1].current_instruction_fetch = s.current_instruction_fetch
+		s.stepList[s.current_step - 1].current_instruction_decode = s.current_instruction_decode
+		s.stepList[s.current_step - 1].current_instruction_execute = s.current_instruction_execute
+		s.stepList[s.current_step - 1].current_address_fetch = s.current_address_fetch
 
-		s.jsonStepList[s.current_step] = s.GetStepJson(s.current_step)
+		s.jsonStepList[s.current_step - 1] = s.GetStepJson(s.current_step - 1)
 	}
 }
 
