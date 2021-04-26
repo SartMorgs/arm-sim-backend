@@ -52,12 +52,12 @@ func (rbank *RegisterBank) GetRegisterBankJson() string{
 			"register_name": rbank.registerList[registerCode].GetRegisterName(),
 			"register_function": rbank.registerList[registerCode].GetRegisterFunction()}
 
-		jrbank, _ := json.Marshal(str_register_bank)
+		jrbank, _ := json.MarshalIndent(str_register_bank, "", "")
 
 		register_bank[registerCode] = string(jrbank)
 	}
 
-	jregister_bank, _ := json.Marshal(register_bank)
+	jregister_bank, _ := json.MarshalIndent(register_bank, "", "")
 
 	return string(jregister_bank)
 }

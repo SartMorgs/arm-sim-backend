@@ -184,11 +184,11 @@ func (s *Simulator) GetStepJson(step int) string{
 		"current_instruction_execute": s.stepList[step].current_instruction_execute,
 		"current_address_fetch": s.stepList[step].current_address_fetch}
 
-	jstep, _ := json.Marshal(step_for_json)
+	jstep, _ := json.MarshalIndent(step_for_json, "", "")
 	return string(jstep)
 }
 
 func (s *Simulator) GetJsonSimulation() string{
-	jsteps, _ := json.Marshal(s.jsonStepList)
+	jsteps, _ := json.MarshalIndent(s.jsonStepList, "", "")
 	return string(jsteps)
 }

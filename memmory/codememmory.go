@@ -67,12 +67,12 @@ func (cdmem *CodeMemmory) GetCodeMemmoryJson() string{
 			"memmory_address": cdmem.romList[addressMemmoryCode].GetAddress(),
 			"alias_field": cdmem.romList[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		code_memmory[count] = string(jmem)
 	}
 
-	jcode_memmory, _ := json.Marshal(code_memmory)
+	jcode_memmory, _ := json.MarshalIndent(code_memmory, "", "")
 
 	return string(jcode_memmory)
 }

@@ -115,7 +115,7 @@ func TestGetStepJson(t *testing.T){
 		"current_instruction_execute": "10110110101001001110100001011010",
 		"current_address_fetch": "0x2"}
 
-	jstep, _ := json.Marshal(str_step1)
+	jstep, _ := json.MarshalIndent(str_step1, "", "")
 
 	want := string(jstep)
 
@@ -169,6 +169,7 @@ func TestRegisterBankRunProgram(t *testing.T){
 	}
 
 	want := register_bank.GetRegisterBankJson()
+	sim.SetMaxStepSize(10)
 	sim.Simulation()
 	got := sim.prog.GetRegisterBank().GetRegisterBankJson()
 
@@ -227,6 +228,7 @@ func TestDataMemmoryRunPorgram(t *testing.T){
 	}
 
 	want := data_memmory.GetDataMemmoryJson()
+	sim.SetMaxStepSize(10)
 	sim.Simulation()
 	got := sim.prog.GetDataMemmory().GetDataMemmoryJson()
 
@@ -275,8 +277,8 @@ func TestRunProgram(t *testing.T){
 	controller := controller.NewController()
 
 	data_memmory_values := map[int][2]string{
-		5: {"0x1", "78"},
-		6: {"0x2", "62"}}
+		4: {"0x1", "78"},
+		5: {"0x2", "62"}}
 
 	register_bank_values := map[int][2]string{
 		0: {"R5", "70"},
@@ -331,17 +333,20 @@ func TestRunProgram(t *testing.T){
 			"current_instruction_execute": controller.GetExecuteUnit().GetInstruction(),
 			"current_address_fetch": addressMemmoryCode}
 
-		jstep, _ := json.Marshal(str_steps)
+		jstep, _ := json.MarshalIndent(str_steps, "", "")
 
-		step_program[count] = string(jstep)
+		step_program[count - (4 * 1024)] = string(jstep)
 	}
 
-	jprogram, _ := json.Marshal(step_program)
+	jprogram, _ := json.MarshalIndent(step_program, "", "")
 	want := string(jprogram)
+	sim.current_step = 0
+	sim.SetMaxStepSize(10)
 	sim.Simulation()
 	got := sim.GetJsonSimulation()
 
-	if got != want{
+	if want != got{
 		t.Errorf("GetJsonSimulation \n got: %v \n want %v \n", len(got), len(want))
 	}
+	
 }

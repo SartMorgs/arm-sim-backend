@@ -53,12 +53,12 @@ func (dtmem *DataMemmory) GetDataMemmoryJson() string{
 			"memmory_address": dtmem.memmoryList[addressMemmoryCode].GetAddress(),
 			"alias_field": dtmem.memmoryList[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		data_memmory[count] = string(jmem)
 	}
 
-	jdata_memmory, _ := json.Marshal(data_memmory)
+	jdata_memmory, _ := json.MarshalIndent(data_memmory, "", "")
 
 	return string(jdata_memmory)
 }

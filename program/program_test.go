@@ -334,12 +334,12 @@ func TestBuildCodeMemmoryJson(t *testing.T){
 			"memmory_address": rom_teste.GetRomList()[addressMemmoryCode].GetAddress(),
 			"alias_field": rom_teste.GetRomList()[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		code_memmory[count] = string(jmem)
 	}
 
-	jcode_memmory, _ := json.Marshal(code_memmory)
+	jcode_memmory, _ := json.MarshalIndent(code_memmory, "", "")
 	want := string(jcode_memmory)
 	got := pr.GetCodeMemmory().GetCodeMemmoryJson()
 
@@ -371,12 +371,12 @@ func TestBuildDataMemmoryJson(t *testing.T){
 			"memmory_address": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetAddress(),
 			"alias_field": data_memmory_test.GetDataMemmoryList()[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		data_memmory[count] = string(jmem)
 	}
 
-	jdata_memmory, _ := json.Marshal(data_memmory)
+	jdata_memmory, _ := json.MarshalIndent(data_memmory, "", "")
 	want := string(jdata_memmory)
 	got := pr.GetDataMemmory().GetDataMemmoryJson()
 
@@ -408,12 +408,12 @@ func TestBuildDeviceMemmoryJson(t *testing.T){
 			"memmory_address": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetAddress(),
 			"alias_field": device_memmory_test.GetDeviceMemmoryList()[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		device_memmory[count] = string(jmem)
 	}
 
-	jdevice_memmory, _ := json.Marshal(device_memmory)
+	jdevice_memmory, _ := json.MarshalIndent(device_memmory, "", "")
 	want := string(jdevice_memmory)
 	got := pr.GetDataMemmory().GetDataMemmoryJson()
 
@@ -444,12 +444,12 @@ func TestBuildRegisterBankJson(t *testing.T){
 			"register_name": register_bank_test.GetRegisterBank() [registerCode].GetRegisterName(),
 			"register_function": register_bank_test.GetRegisterBank() [registerCode].GetRegisterFunction()}
 
-		jrbank, _ := json.Marshal(str_register_bank)
+		jrbank, _ := json.MarshalIndent(str_register_bank, "", "")
 
 		register_bank[registerCode] = string(jrbank)
 	}
 
-	jregister_bank, _ := json.Marshal(register_bank)
+	jregister_bank, _ := json.MarshalIndent(register_bank, "", "")
 	want := string(jregister_bank)
 	got := pr.GetRegisterBank().GetRegisterBankJson()
 	

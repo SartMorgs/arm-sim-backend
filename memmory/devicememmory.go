@@ -58,12 +58,12 @@ func (dmem *DeviceMemmory) GetDeviceMemmoryJson() string{
 			"memmory_address": dmem.deviceList[addressMemmoryCode].GetAddress(),
 			"alias_field": dmem.deviceList[addressMemmoryCode].GetAliasField()}
 
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		device_memmory[count] = string(jmem)
 	}
 
-	jdevice_memmory, _ := json.Marshal(device_memmory)
+	jdevice_memmory, _ := json.MarshalIndent(device_memmory, "", "")
 
 	return string(jdevice_memmory)
 }
