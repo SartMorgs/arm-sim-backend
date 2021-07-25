@@ -6,8 +6,10 @@ type DecodeUnit struct{
 	instructionCode string
 	instructionType1 string
 	instructionType2 string
+	instructionName string
 	instructionFormat map[string]string
 	opcode string
+	gapAddress bool
 }
 
 func NewDecodeUnit() *DecodeUnit{
@@ -65,10 +67,11 @@ func NewDecodeUnit() *DecodeUnit{
 		"110101": {"STR", "Store", "2"},
 
 		// Nothing
-		"111111": {"NOP", "Nothing", "1"},
+		"000000": {"NOP", "Nothing", "1"},
 	}
 
-	decodeunit.instructionCode = ""
+	decodeunit.gapAddress = false
+	decodeunit.instructionCode = "00000000000000000000000000000000"
 	decodeunit.instructionType1 = ""
 	decodeunit.instructionType2 = ""
 	decodeunit.instructionFormat = make(map[string]string)
@@ -84,9 +87,20 @@ func (dc *DecodeUnit) GetOpcode() string{
 	return dc.opcode
 }
 
+func (dc *DecodeUnit) getOpcode(inst string) string{
+	instructionRune := []rune(dc.instructionCode)
+	opcode := string(instructionRune[0:6])
+	return opcode
+}
+
+func (dc *DecodeUnit) GetGapAddressFlag() bool{
+	return dc.gapAddress
+}
+
 func (dc *DecodeUnit) MapInstruction(){
 	dc.opcode = dc.getOpcode(dc.instructionCode)
 
+	dc.instructionName = dc.instructionMap[dc.opcode][0]
 	dc.instructionType1 = dc.instructionMap[dc.opcode][1]
 	dc.instructionType2 = dc.instructionMap[dc.opcode][2]
 }
@@ -102,6 +116,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 
 	// Verify what's type of instruction
 	if dc.instructionType1 == "Arithmetic"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["rn"] = string(instructionRune[11:16])
@@ -112,6 +127,7 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["data"] = string(instructionRune[16:32])
 		}
 	} else if dc.instructionType1 == "Comparison"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rn"] = string(instructionRune[6:11])
 			dc.instructionFormat["rm"] = string(instructionRune[11:16])
@@ -120,22 +136,42 @@ func (dc *DecodeUnit) SplitInstruction(){
 			dc.instructionFormat["imediato"] = string(instructionRune[11:19])
 		}
 	} else if dc.instructionType1 == "Bypass"{
+		dc.gapAddress = true
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rn"] = string(instructionRune[6:11])
 		} else{
 			dc.instructionFormat["label"] = string(instructionRune[6:32])
 		}
 	} else if dc.instructionType1 == "Load" || dc.instructionType1 == "Store"{
+		dc.gapAddress = false
 		if dc.instructionType2 == "1"{
 			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["rn"] = string(instructionRune[11:16])
 		} else{
-			dc.instructionFormat["rn"] = string(instructionRune[6:11])
+			dc.instructionFormat["rd"] = string(instructionRune[6:11])
 			dc.instructionFormat["address"] = string(instructionRune[11:25])
 		}
 	} else if dc.instructionType1 == "Nop"{
-		dc.instructionFormat["rest"] = ""
+		dc.gapAddress = false
+		dc.instructionFormat["rest"] = string(instructionRune[6:32])
 	} else{
-		dc.instructionFormat["instruction"] = dc.instructionCode
+		dc.gapAddress = false
+		dc.instructionFormat["rest"] = dc.instructionCode
 	}
+}
+
+func (dc *DecodeUnit) GetInstruction() string{
+	return dc.instructionCode
+}
+
+func (dc *DecodeUnit) GetInstructionFormat() map[string]string{
+	return dc.instructionFormat
+}
+
+func (dc *DecodeUnit) GetInstructionName() string{
+	return dc.instructionName
+}
+
+func (dc *DecodeUnit) GetInstructionType2() string{
+	return dc.instructionType2
 }

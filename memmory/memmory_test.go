@@ -178,3 +178,13 @@ func TestGetFullBinValue(t *testing.T){
 		t.Errorf("GetFullBinValue \n got: %v \n want: %v \n", got, want)
 	}
 }
+
+func TestGetMemmoryJson(t *testing.T){
+	mem := NewMemmory("0x1000")
+	want := `{"alias_field":"","binary_value":"00","config_type":"D","decimal_value":"0","full_binary":"00000000000000000000000000000000","hexadecimal_value":"0x0","memmory_address":"0x1000"}`
+	got := mem.GetMemmoryJson()
+
+	if got != want{
+		t.Errorf("GetMemmoryJson \n got: %v \n want: %v \n", got, want)
+	}
+}

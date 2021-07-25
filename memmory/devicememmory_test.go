@@ -3,6 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
+	"encoding/json"
 )
 
 var dvmm DeviceMemmory
@@ -44,5 +45,37 @@ func TestResetDeviceMemmory(t *testing.T){
 
 	if got != want{
 		t.Errorf("ResetDeviceMemmory \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetDeviceMemmoryJson(t *testing.T){
+	dvmm := NewDeviceMemmory()
+	test := NewDeviceMemmory()
+
+	device_memmory := make(map[int]string)
+
+	var addressMemmoryCode string
+	for count := 0; count < (4 * 1024); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		str_memmory := map[string]string{
+			"decimal_value": strconv.FormatInt(int64(test.GetDeviceMemmoryList()[addressMemmoryCode].GetDecValue()), 10),
+			"hexadecimal_value": test.GetDeviceMemmoryList()[addressMemmoryCode].GetHexValue(),
+			"binary_value": test.GetDeviceMemmoryList()[addressMemmoryCode].GetBinValue(),
+			"full_binary": test.GetDeviceMemmoryList()[addressMemmoryCode].GetFullBinValue(),
+			"config_type": test.GetDeviceMemmoryList()[addressMemmoryCode].GetConfigType(),
+			"memmory_address": test.GetDeviceMemmoryList()[addressMemmoryCode].GetAddress(),
+			"alias_field": test.GetDeviceMemmoryList()[addressMemmoryCode].GetAliasField()}
+		
+		jmem, _ := json.Marshal(str_memmory)
+
+		device_memmory[count] = string(jmem)
+	}
+
+	jdevice_memmory, _ := json.Marshal(device_memmory)
+	want := string(jdevice_memmory)
+	got := dvmm.GetDeviceMemmoryJson()
+
+	if got != want{
+		t.Errorf("GetDeviceMemmoryJson \n got: %v \n want %v \n", got, want)
 	}
 }

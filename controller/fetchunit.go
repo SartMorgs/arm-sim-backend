@@ -7,7 +7,7 @@ type FetchUnit struct{
 
 func NewFetchUnit() *FetchUnit{
 	fetchUnit := new(FetchUnit)
-	fetchUnit.instruction = ""
+	fetchUnit.instruction = "00000000000000000000000000000000"
 	fetchUnit.programArea = "main"
 
 	return fetchUnit
