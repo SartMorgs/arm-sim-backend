@@ -7,6 +7,8 @@ import (
 
 type CodeMemmory struct{
 	romList map[string]*Memmory
+	functionMap string
+	inputCode string
 }
 
 func NewCodeMemmory() *CodeMemmory{
@@ -75,4 +77,37 @@ func (cdmem *CodeMemmory) GetCodeMemmoryJson() string{
 	jcode_memmory, _ := json.MarshalIndent(code_memmory, "", "")
 
 	return string(jcode_memmory)
+}
+
+func (cdmem *CodeMemmory) SetInputCode(code string){
+	cdmem.inputCode = code
+}
+
+func (cdmem *CodeMemmory) BuildFunctionMap() string{
+	type Teste struct{
+		Main string `json:"main"`
+		Func1 string `json:"func1"`
+		Int0_Hanler string `json:"INT0_Handler"`
+	}
+
+	var code_map Teste
+
+	code_json := []byte(cdmem.inputCode)
+
+	err := json.Unmarshal(code_json, &code_map)
+	if err != nil {
+        panic(err)
+    }
+
+	//print(string(code_map))
+	//m := code_map.(map[string]string)
+
+	/*
+	for key, value := range code_map{
+		print(key)
+		print(value)
+	} 
+	*/
+
+	return "A"
 }

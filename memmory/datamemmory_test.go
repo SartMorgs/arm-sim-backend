@@ -3,7 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
-	"encoding/json"
+	//"encoding/json"
 )
 
 var dmm DataMemmory
@@ -38,6 +38,7 @@ func TestResetDataMemmory(t *testing.T){
 	}
 }
 
+/*
 func TestGetDataMemmoryJson(t *testing.T){
 	dmm := NewDataMemmory()
 	test := NewDataMemmory()
@@ -69,3 +70,4 @@ func TestGetDataMemmoryJson(t *testing.T){
 		t.Errorf("GetDataMemmoryJson \n got: %v \n want %v \n", got, want)
 	}
 }
+*/

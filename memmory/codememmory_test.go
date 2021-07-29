@@ -3,6 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
+
 	"encoding/json"
 )
 
@@ -61,34 +62,44 @@ func TestResetCodeMemmory(t *testing.T){
 	}
 }
 
-func TestGetCodeMemmoryJson(t *testing.T){
+func TestSetInputCode(t *testing.T){
 	cmm := NewCodeMemmory()
-	test := NewCodeMemmory()
 
-	code_memmory := make(map[int]string)
+	code_json, _ := json.MarshalIndent("{\r\n    \"main\": [\r\n        \"01010000000000000001101010000000\",\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\",\r\n        \"00001000011000000000100000000000\",\r\n        \"110101F1F00000000000000000000000\",\r\n        \"010111F0F00000000000000000000000\"\r\n    ],\r\n    \"func1\": [\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\"\r\n    ],\r\n    \"INT0_Handler\": [\r\n        \"00001000011000000000100000000000\",\r\n        \"00001000011000000000100000000000\"\r\n    ]\r\n}", "", "")
+	code := string(code_json)
 
-	var addressMemmoryCode string
-	for count := 0; count < (12 * 1024); count++{
-		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		str_memmory := map[string]string{
-			"decimal_value": strconv.FormatInt(int64(test.GetRomList()[addressMemmoryCode].GetDecValue()), 10),
-			"hexadecimal_value": test.GetRomList()[addressMemmoryCode].GetHexValue(),
-			"binary_value": test.GetRomList()[addressMemmoryCode].GetBinValue(),
-			"full_binary": test.GetRomList()[addressMemmoryCode].GetFullBinValue(),
-			"config_type": test.GetRomList()[addressMemmoryCode].GetConfigType(),
-			"memmory_address": test.GetRomList()[addressMemmoryCode].GetAddress(),
-			"alias_field": test.GetRomList()[addressMemmoryCode].GetAliasField()}
+	want := code
 
-		jmem, _ := json.Marshal(str_memmory)
+	cmm.SetInputCode(code)
 
-		code_memmory[count] = string(jmem)
-	}
-
-	jcode_memmory, _ := json.Marshal(code_memmory)
-	want := string(jcode_memmory)
-	got := cmm.GetCodeMemmoryJson()
+	got := cmm.inputCode
 
 	if got != want{
-		t.Errorf("GetCodeMemmoryJson \n got: %v \n want %v \n", got, want)
+		t.Errorf("SetInputCode \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestBuildFunctionMap(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	code_json, _ := json.MarshalIndent("{\r\n    \"main\": [\r\n        \"01010000000000000001101010000000\",\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\",\r\n        \"00001000011000000000100000000000\",\r\n        \"110101F1F00000000000000000000000\",\r\n        \"010111F0F00000000000000000000000\"\r\n    ],\r\n    \"func1\": [\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\"\r\n    ],\r\n    \"INT0_Handler\": [\r\n        \"00001000011000000000100000000000\",\r\n        \"00001000011000000000100000000000\"\r\n    ]\r\n}", "", "")
+	code := string(code_json)
+
+	function_map_json, _ := json.MarshalIndent(`functions: {
+    "main": ["0x0", "0x5"],
+    "func1": ["0x6", "0x0x7"],
+}
+interruptions: {
+}`, "", "")
+
+	want := string(function_map_json)
+
+	cmm.SetInputCode(code)
+	cmm.BuildFunctionMap()
+
+	got := cmm.functionMap 
+
+	if got != want{
+		t.Errorf("BuildFunctionMap \n got: %v \n want %v \n", got, want)
 	}
 }
