@@ -3,7 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
-
+	"reflect"
 	"encoding/json"
 )
 
@@ -65,41 +65,347 @@ func TestResetCodeMemmory(t *testing.T){
 func TestSetInputCode(t *testing.T){
 	cmm := NewCodeMemmory()
 
-	code_json, _ := json.MarshalIndent("{\r\n    \"main\": [\r\n        \"01010000000000000001101010000000\",\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\",\r\n        \"00001000011000000000100000000000\",\r\n        \"110101F1F00000000000000000000000\",\r\n        \"010111F0F00000000000000000000000\"\r\n    ],\r\n    \"func1\": [\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\"\r\n    ],\r\n    \"INT0_Handler\": [\r\n        \"00001000011000000000100000000000\",\r\n        \"00001000011000000000100000000000\"\r\n    ]\r\n}", "", "")
-	code := string(code_json)
+	json_input := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"110101F1F00000000000000000000000",
+			"010111F0F00000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	code_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_input), &code_json)
 
-	want := code
+	want := code_json
 
-	cmm.SetInputCode(code)
+	cmm.SetInputCode(code_json)
 
 	got := cmm.inputCode
 
-	if got != want{
+	if !reflect.DeepEqual(want, got){
 		t.Errorf("SetInputCode \n got: %v \n want %v \n", got, want)
 	}
 }
 
+
 func TestBuildFunctionMap(t *testing.T){
 	cmm := NewCodeMemmory()
 
-	code_json, _ := json.MarshalIndent("{\r\n    \"main\": [\r\n        \"01010000000000000001101010000000\",\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\",\r\n        \"00001000011000000000100000000000\",\r\n        \"110101F1F00000000000000000000000\",\r\n        \"010111F0F00000000000000000000000\"\r\n    ],\r\n    \"func1\": [\r\n        \"01010000001000000000100100000000\",\r\n        \"00000100010000000000100000000000\"\r\n    ],\r\n    \"INT0_Handler\": [\r\n        \"00001000011000000000100000000000\",\r\n        \"00001000011000000000100000000000\"\r\n    ]\r\n}", "", "")
-	code := string(code_json)
+	json_input := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"110101F1F00000000000000000000000",
+			"010111F0F00000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	code_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_input), &code_json)
 
-	function_map_json, _ := json.MarshalIndent(`functions: {
-    "main": ["0x0", "0x5"],
-    "func1": ["0x6", "0x0x7"],
-}
-interruptions: {
-}`, "", "")
+	function_map_json := `{
+		"functions": {
+			"main": {
+				"start": "0x0", 
+				"end": "0x5"
+			},
+			"func1": {
+				"start": "0x6",
+				"end": "0x7"
+			}
+		},
+		"interruptions": {
+			"INT0_Handler": {
+				"start": "0x0", 
+				"end": "0x1"
+			}
+		}
+	}`
+	json_output := make(map[string]map[string]map[string]string)
+	json.Unmarshal([]byte(function_map_json), &json_output)
 
-	want := string(function_map_json)
+	want := json_output
 
-	cmm.SetInputCode(code)
+	cmm.SetInputCode(code_json)
 	cmm.BuildFunctionMap()
 
 	got := cmm.functionMap 
 
-	if got != want{
+	if !reflect.DeepEqual(want, got){
 		t.Errorf("BuildFunctionMap \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetInputCode(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	json_input := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"110101F1F00000000000000000000000",
+			"010111F0F00000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	code_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_input), &code_json)
+
+	want := code_json
+	cmm.inputCode = code_json
+	got := cmm.GetInputCode()
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("GetInputCode \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestFixFunctionAddressIntoMainCode(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	json_input := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"110101F1F00000000000000000000000",
+			"010111F0F00000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	code_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_input), &code_json)
+
+	json_want := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"11010100000000000000000000000110",
+			"01011100000000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	want_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_want), &want_json)
+
+	want := want_json
+	cmm.inputCode = code_json
+	cmm.BuildFunctionMap()
+	cmm.FixFunctionAddressIntoMainCode()
+	got := cmm.inputCode
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("FixFunctionAddressIntoMainCode \n got: %v \n want %v \n", got, want)
+	} 
+}
+
+func TestBuildCodeMemmory(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	var test_program []string = []string{
+		"01010000000000000001101010000000",
+		"01010000001000000000100100000000",
+		"00000100010000000000100000000000",
+		"00001000011000000000100000000000",
+		"11010100000000000000000000000110",
+		"01011100000000000000000000000000"}
+	var test_function []string = []string{
+		"01010000001000000000100100000000",
+		"00000100010000000000100000000000"}
+	var test_interruption []string = []string{
+		"00001000011000000000100000000000",
+		"00001000011000000000100000000000"}
+
+	json_input := `{
+		"main": [
+			"01010000000000000001101010000000",
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000",
+			"00001000011000000000100000000000",
+			"110101F1F00000000000000000000000",
+			"010111F0F00000000000000000000000"
+		],
+		"func1": [
+			"01010000001000000000100100000000",
+			"00000100010000000000100000000000"
+		],
+		"INT0_Handler": [
+			"00001000011000000000100000000000",
+			"00001000011000000000100000000000"
+		]
+	}`
+	code_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_input), &code_json)
+
+	cmm.SetInputCode(code_json)
+	cmm.BuildFunctionMap()
+	cmm.FixFunctionAddressIntoMainCode()
+	cmm.AddCodeIntoMemmory()
+
+	cmm_want := NewCodeMemmory()
+	
+	var addressMemmoryCode string
+	for iterator := 0; iterator < len(test_interruption); iterator++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
+		cmm_want.AddInstructionField(addressMemmoryCode, test_interruption[iterator])
+	}
+
+	start_address_main := (4 * 1024)
+	for iterator := start_address_main; iterator < (start_address_main + len(test_program)); iterator++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
+		cmm_want.AddInstructionField(addressMemmoryCode, test_program[iterator - start_address_main])
+	}
+
+	start_address_function := start_address_main + len(test_program)
+	for iterator := start_address_function; iterator < (start_address_function + len(test_function)); iterator++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
+		cmm_want.AddInstructionField(addressMemmoryCode, test_function[iterator - start_address_function])
+	}
+
+	want := cmm.GetCodeMemmoryJson()
+	got := cmm_want.GetCodeMemmoryJson()
+
+	if got != want{
+		t.Errorf("BuildCodeMemmory \n got: \n want \n")
+	}
+}
+
+func TestSetDirectiveCode(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	json_directive := `{
+		"1": [
+			"addr1",
+			"EQU",
+			"0x10"
+		],
+		"2": [
+			"AREA",
+			"main",
+			"CODE",
+			"READONLY"
+		]
+	}`
+	directive_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_directive), &directive_json)
+
+	want := directive_json
+
+	cmm.SetDirectiveCode(directive_json)
+
+	got := cmm.directiveCode
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("SetDirectiveCode \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetDirectiveCode(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	json_directive := `{
+		"1": [
+			"addr1",
+			"EQU",
+			"0x10"
+		],
+		"2": [
+			"AREA",
+			"main",
+			"CODE",
+			"READONLY"
+		]
+	}`
+	directive_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_directive), &directive_json)
+
+	want := directive_json
+
+	cmm.directiveCode = directive_json
+
+	got := cmm.GetDirectiveCode()
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("SetDirectiveCode \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestAddDirectivesAliasIntoMemmory(t *testing.T){
+	cmm := NewCodeMemmory()
+
+	json_directive := `{
+		"1": [
+			"addr1",
+			"EQU",
+			"0x10"
+		],
+		"2": [
+			"AREA",
+			"main",
+			"CODE",
+			"READONLY"
+		]
+	}`
+	directive_json := make(map[string]interface{})
+	json.Unmarshal([]byte(json_directive), &directive_json)
+	//print(directive_json["1"].([]interface{})[2].(string))
+	//print(len(directive_json))
+
+	cmm.directiveCode = directive_json
+	cmm.AddDirectivesAliasIntoMemmory()
+
+	cmm_want := NewCodeMemmory()
+	cmm_want.AddAliasMemmoryField("0x10", "addr1")
+
+	got := cmm.GetCodeMemmoryJson()
+	want := cmm_want.GetCodeMemmoryJson()
+
+	if got != want{
+		t.Errorf("AddDirectivesAliasIntoMemmory \n got: \n want \n")
 	}
 }

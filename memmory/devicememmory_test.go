@@ -3,7 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
-	//"encoding/json"
+	"encoding/json"
 )
 
 var dvmm DeviceMemmory
@@ -48,7 +48,6 @@ func TestResetDeviceMemmory(t *testing.T){
 	}
 }
 
-/*
 func TestGetDeviceMemmoryJson(t *testing.T){
 	dvmm := NewDeviceMemmory()
 	test := NewDeviceMemmory()
@@ -67,17 +66,17 @@ func TestGetDeviceMemmoryJson(t *testing.T){
 			"memmory_address": test.GetDeviceMemmoryList()[addressMemmoryCode].GetAddress(),
 			"alias_field": test.GetDeviceMemmoryList()[addressMemmoryCode].GetAliasField()}
 		
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		device_memmory[count] = string(jmem)
 	}
 
-	jdevice_memmory, _ := json.Marshal(device_memmory)
+	jdevice_memmory, _ := json.MarshalIndent(device_memmory, "", "")
 	want := string(jdevice_memmory)
 	got := dvmm.GetDeviceMemmoryJson()
 
 	if got != want{
 		t.Errorf("GetDeviceMemmoryJson \n got: %v \n want %v \n", got, want)
+		//t.Errorf("GetDeviceMemmoryJson \n got: \n want \n")
 	}
 }
-*/

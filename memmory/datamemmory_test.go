@@ -3,7 +3,7 @@ package memmory
 import(
 	"testing"
 	"strconv"
-	//"encoding/json"
+	"encoding/json"
 )
 
 var dmm DataMemmory
@@ -38,7 +38,6 @@ func TestResetDataMemmory(t *testing.T){
 	}
 }
 
-/*
 func TestGetDataMemmoryJson(t *testing.T){
 	dmm := NewDataMemmory()
 	test := NewDataMemmory()
@@ -57,17 +56,17 @@ func TestGetDataMemmoryJson(t *testing.T){
 			"memmory_address": test.GetDataMemmoryList()[addressMemmoryCode].GetAddress(),
 			"alias_field": test.GetDataMemmoryList()[addressMemmoryCode].GetAliasField()}
 		
-		jmem, _ := json.Marshal(str_memmory)
+		jmem, _ := json.MarshalIndent(str_memmory, "", "")
 
 		data_memmory[count] = string(jmem)
 	}
 
-	jdata_memmory, _ := json.Marshal(data_memmory)
+	jdata_memmory, _ := json.MarshalIndent(data_memmory, "", "")
 	want := string(jdata_memmory)
 	got := dmm.GetDataMemmoryJson()
 
 	if got != want{
 		t.Errorf("GetDataMemmoryJson \n got: %v \n want %v \n", got, want)
+		//t.Errorf("GetDataMemmoryJson \n got: \n want \n")
 	}
 }
-*/
