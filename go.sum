@@ -1,2 +1,4 @@
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/nsf/jsondiff v0.0.0-20210303162244-6ea32392771e h1:S+/ptYdZtpK/MDstwCyt+ZHdXEpz86RJZ5gyZU4txJY=
 github.com/nsf/jsondiff v0.0.0-20210303162244-6ea32392771e/go.mod h1:uFMI8w+ref4v2r9jz+c9i1IfIttS/OkmLfrk1jne5hs=
