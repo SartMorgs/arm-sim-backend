@@ -210,6 +210,20 @@ func TestExecuteFunctionForInstruction(t *testing.T){
 		t.Errorf("ExecuteFunctionForInstruction \n got: %v \n want %v \n", got, want)
 	}
 }
+/* FINALIZAR
+func TestExecuteLdr1(t *testing.T){
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.ram.ChangeField("0x1", 70)
+
+}
+/*
 
 func TestExecuteLdr2(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
