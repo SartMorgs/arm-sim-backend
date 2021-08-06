@@ -36,6 +36,24 @@ type ExecuteUnit struct{
 func NewExecuteUnit() *ExecuteUnit{
 	executeunit := new(ExecuteUnit)
 	executeunit.config = make(map[string]int64)
+
+	cfi := new(ConfigForInstruction)
+	cfi.targetRegisterBin = "0"
+	cfi.targetRegisterDec = 0
+	cfi.addressInstructionBin = "0"
+	cfi.addressInstructionDec = 0
+	cfi.sourceRegister1Bin = "0"
+	cfi.sourceRegister1Dec = 0
+	cfi.sourceRegister2Bin = "0"
+	cfi.sourceRegister2Dec = 0
+	cfi.valueInstructionBin = "0"
+	cfi.valueInstructionDec = 0
+	cfi.valueRegisterBin = "0"
+	cfi.valueRegisterDec = 0
+	cfi.restBin = "0"
+	cfi.restDec = 0
+
+	executeunit.ConfigForInstruction = *cfi
 	
 	executeunit.functionInstructionMap = map[[2]string]func(){
 		// Arithmetic
@@ -43,44 +61,46 @@ func NewExecuteUnit() *ExecuteUnit{
 		{"ADDS", "2"}: executeunit.ConfigForAdds2,
 		{"SUBS", "1"}: executeunit.ConfigForSubs1,
 		{"SUBS", "2"}: executeunit.ConfigForSubs2,
-		//{"MULS", "1"}: executeunit.ConfigForMuls1,
-		//{"MULS", "2"}: executeunit.ConfigForMuls2,
+		{"MULS", "1"}: executeunit.ConfigForMuls1,
+		{"MULS", "2"}: executeunit.ConfigForMuls2,
 		{"ANDS", "1"}: executeunit.ConfigForAnds1,
 		{"ANDS", "2"}: executeunit.ConfigForAnds2,
-		//{"ORRS", "1"}: executeunit.ConfigForOrrs1,
-		//{"ORRS", "2"}: executeunit.ConfigForOrrs2,
-		//{"EORS", "1"}: executeunit.ConfigForEors1,
-		//{"EORS", "2"}: executeunit.ConfigForEors2,
-		//{"BICS", "1"}: executeunit.ConfigForBics1,
-		//{"BICS", "2"}: executeunit.ConfigForBics2,
-		//{"ASRS", "1"}: executeunit.ConfigForAsrs1,
-		//{"ASRS", "2"}: executeunit.ConfigForAsrs2,
-		//{"LSLS", "1"}: executeunit.ConfigForLsls1,
-		//{"LSLS", "2"}: executeunit.ConfigForLsls2,
-		//{"LSRS", "1"}: executeunit.ConfigForLsrs1,
-		//{"LSRS", "2"}: executeunit.ConfigForLsrs2,
-		//{"RORS", "1"}: executeunit.ConfigForRors1,
-		//{"RORS", "2"}: executeunit.ConfigForRors2,
+		{"ORRS", "1"}: executeunit.ConfigForOrrs1,
+		{"ORRS", "2"}: executeunit.ConfigForOrrs2,
+		{"EORS", "1"}: executeunit.ConfigForEors1,
+		{"EORS", "2"}: executeunit.ConfigForEors2,
+		{"BICS", "1"}: executeunit.ConfigForBics1,
+		{"BICS", "2"}: executeunit.ConfigForBics2,
+		{"ASRS", "1"}: executeunit.ConfigForAsrs1,
+		{"ASRS", "2"}: executeunit.ConfigForAsrs2,
+		{"LSLS", "1"}: executeunit.ConfigForLsls1,
+		{"LSLS", "2"}: executeunit.ConfigForLsls2,
+		{"LSRS", "1"}: executeunit.ConfigForLsrs1,
+		{"LSRS", "2"}: executeunit.ConfigForLsrs2,
+		{"RORS", "1"}: executeunit.ConfigForRors1,
+		{"RORS", "2"}: executeunit.ConfigForRors2,
 
 		// Comparison
-		//{"CMN", "1"}: executeunit.ConfigForCmn1,
-		//{"CMN", "2"}: executeunit.ConfigForCms2,
-		//{"CMP", "1"}: executeunit.ConfigForCmp1,
-		//{"CMP", "2"}: executeunit.ConfigForCmp2,
+		//{"CMN", "1"}: executeunit.ConfigForCmn1, VER COM PROFESSOR
+		//{"CMN", "2"}: executeunit.ConfigForCms2, VER COM PROFESSOR
+		{"CMP", "1"}: executeunit.ConfigForCmp1,
+		{"CMP", "2"}: executeunit.ConfigForCmp2,
 
 		// Bypass
 		{"MOVS", "1"}: executeunit.ConfigForMovs1,
 		{"MOVS", "2"}: executeunit.ConfigForMovs2,
-		//{"BEQ", "1"}: executeunit.ConfigForBeq1,
-		//{"BEQ", "2"}: executeunit.ConfigForBeq2,
-		//{"BNE", "1"}: executeunit.ConfigForBne1,
-		//{"BNE", "2"}: executeunit.ConfigForBne2,
-		//{"BLT", "1"}: executeunit.ConfigForBlt1,
-		//{"BLT", "2"}: executeunit.ConfigForBlt2,
-		//{"BL", "1"}: executeunit.ConfigForBl1,
-		//{"BL", "2"}: executeunit.ConfigForBl2,
-		//{"BX", "1"}: executeunit.ConfigForBx1,
+		{"BEQ", "1"}: executeunit.ConfigForBeq1,
+		{"BEQ", "2"}: executeunit.ConfigForBeq2,
+		{"BNE", "1"}: executeunit.ConfigForBne1,
+		{"BNE", "2"}: executeunit.ConfigForBne2,
+		{"BLT", "1"}: executeunit.ConfigForBlt1,
+		{"BLT", "2"}: executeunit.ConfigForBlt2,
+		{"BL", "1"}: executeunit.ConfigForBl1,
+		{"BL", "2"}: executeunit.ConfigForBl2,
+		{"BX", "1"}: executeunit.ConfigForBx1,
 		//{"BX", "2"}: executeunit.ConfigForBx2,
+		{"B", "1"}: executeunit.ConfigForB1,
+		{"B", "2"}: executeunit.ConfigForB2,
 
 		// Load and Store
 		{"LDR", "1"}: executeunit.ConfigForLdr1,
@@ -263,6 +283,156 @@ func (eu *ExecuteUnit) ConfigForMovs1(){
 
 func (eu *ExecuteUnit) ConfigForMovs2(){
 	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForMuls1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForMuls2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForOrrs1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForOrrs2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForEors1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForEors2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBics1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBics2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForAsrs1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForAsrs2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForLsls1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForLsls2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForLsrs1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForLsrs2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForRors1(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForRors2(){
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForCmp1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForCmp2(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] =  eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBeq1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBeq2(){
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBne1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBne2(){
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBlt1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBlt2(){
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBl1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBl2(){
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBx1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForB1(){
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForB2(){
 	eu.config["value"] = eu.valueInstructionDec
 }
 

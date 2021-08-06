@@ -198,19 +198,19 @@ func TestSplitInstructionLoadStore2(t *testing.T){
 	// Load and Store Instruction
 	// Second test case
 	want_opcode		:= "110101"
-	want_rn			:= "10111"
+	want_rd			:= "10111"
 	want_address	:= "11110100001011"
 
 	cn.decodeUnit.instructionCode = "11010110111111101000010111011010"
 	cn.decodeUnit.SplitInstruction()
 
 	got_opcode	:= cn.decodeUnit.opcode
-	got_rn		:= cn.decodeUnit.instructionFormat["rn"]
+	got_rd		:= cn.decodeUnit.instructionFormat["rd"]
 	got_address	:= cn.decodeUnit.instructionFormat["address"]
 
-	if 	got_opcode != want_opcode || got_rn != want_rn || got_address != want_address{
-			t.Errorf("SplitInstruction for load and store instructions type 2 \n got_opcode: %v \n want_opcode %v \n got_rn: %v \n want_rn %v \n got_address: %v \n want_address %v", 
-					got_opcode, want_opcode, got_rn, want_rn, got_address, want_address)
+	if 	got_opcode != want_opcode || got_rd != want_rd || got_address != want_address{
+			t.Errorf("SplitInstruction for load and store instructions type 2 \n got_opcode: %v \n want_opcode %v \n got_rd: %v \n want_rd %v \n got_address: %v \n want_address %v", 
+					got_opcode, want_opcode, got_rd, want_rd, got_address, want_address)
 	}
 }
 
@@ -237,7 +237,7 @@ func TestSplitInstructionNop(t *testing.T){
 func TestGetInstructionFormat(t *testing.T){
 	cn := NewController()
 	want := map[string]string{
-		"rn": "10111",
+		"rd": "10111",
 		"address": "11110100001011",
 	}
 
@@ -483,6 +483,530 @@ func TestConfigForMovs2(t *testing.T){
 	}
 }
 
+func TestConfigForMuls1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForMuls1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForMuls type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForMuls2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForMuls2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForMuls type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForOrrs1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForOrrs1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForOrrs type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForOrrs2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForOrrs2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForOrrs type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForEors1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForEors1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForEors type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForEors2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForEors2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForEors type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBics1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForBics1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBics type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBics2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForBics2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBics type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForAsrs1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForAsrs1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForAsrs type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForAsrs2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForAsrs2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForAsrs type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForLsls1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForLsls1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForLsls type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForLsls2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForLsls2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForLsls type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForLsrs1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForLsrs1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForLsrs type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForLsrs2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForLsrs2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForLsrs type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForRors1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"source_register2": 4,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00100")
+	cn.executeUnit.ConfigForRors1()
+
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForRors type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForRors2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"target_register": 2,
+		"source_register1": 2,
+		"value": 70,
+	}
+	cn.executeUnit.SetTargetRegister("00010")
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000001000110")
+	cn.executeUnit.ConfigForRors2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForRors type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForCmp1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+		"source_register2": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetSourceRegister2("00010")
+	cn.executeUnit.ConfigForCmp1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForCmp1 type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForCmp2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+		"value": 2,
+	}
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForCmp2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForCmp type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBeq1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForBeq1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBeq type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBeq2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"value": 2,
+	}
+
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForBeq2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBeq type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBne1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForBne1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBne type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBne2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"value": 2,
+	}
+
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForBne2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBne type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBlt1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForBlt1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBlt type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBlt2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"value": 2,
+	}
+
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForBlt2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBlt type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBl1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForBl1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBl type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBl2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"value": 2,
+	}
+
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForBl2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBl type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForBx1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForBx1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForBx type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForB1(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"source_register1": 2,
+	}
+
+	cn.executeUnit.SetSourceRegister1("00010")
+	cn.executeUnit.ConfigForB1()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForB type 1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestConfigForB2(t *testing.T){
+	cn := NewController()
+
+	want := map[string]int64{
+		"value": 2,
+	}
+
+	cn.executeUnit.SetValueInstruction("0000000000000010")
+	cn.executeUnit.ConfigForB2()
+	got := cn.executeUnit.config
+
+	if !reflect.DeepEqual(want, got){
+		t.Errorf("ConfigForB type 2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+// -------------------------------------------------------------------------------
 
 func TestSetFunctionForConfigInstruction(t *testing.T){
 	cn := NewController()
