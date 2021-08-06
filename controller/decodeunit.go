@@ -59,8 +59,8 @@ func NewDecodeUnit() *DecodeUnit{
 		"110010": {"BL", "Bypass", "2"},
 		"010011": {"BX", "Bypass", "1"},
 		//"110011": {"BX", "Bypass", "2"}, PERGUNTAR PARA PROFESSOR
-		//"??????": {"B", "Bypass", "1"},
-		//"??????": {"B", "Bypass", "2"},
+		"011011": {"B", "Bypass", "1"},
+		"111011": {"B", "Bypass", "2"},
 
 		// Load and Store
 		"010100": {"LDR", "Load", "1"},
