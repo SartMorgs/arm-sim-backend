@@ -223,7 +223,7 @@ func TestExecuteLdr1(t *testing.T){
 	pr.ram.ChangeField("0x1", 70)
 
 }
-/*
+*/
 
 func TestExecuteLdr2(t *testing.T){
 	rom_teste := memmory.NewCodeMemmory()
