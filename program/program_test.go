@@ -3,6 +3,7 @@ package program
 import (
 	"arm/memmory"
 	"arm/registerbank"
+
 	//"arm/ula"
 	//"arm/programcounter"
 	//"arm/controller"
@@ -356,6 +357,57 @@ func TestExecuteSubs2(t *testing.T) {
 
 	if got != want {
 		t.Errorf("ExecuteSubs2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteMuls1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", 2)
+	pr.registerBank.ChangeRegister("R1", 8)
+	pr.controller.GetExecuteUnit().SetTargetRegister("00110")
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetSourceRegister2("00001")
+
+	// MULS 6, 5, 1
+	want := 16
+	pr.GetRegisterBank().GetRegisterBank()["R5"].SetValue(2)
+	pr.GetRegisterBank().GetRegisterBank()["R1"].SetValue(8)
+	pr.ExecuteMuls1()
+	got := pr.GetRegisterBank().GetRegisterBank()["R6"].GetDecValue()
+
+	if got != want {
+		t.Errorf("ExecuteMuls1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteMuls2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", 2)
+	pr.controller.GetExecuteUnit().SetTargetRegister("00110")
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetValueInstruction("0000000000001000")
+
+	// MULS 6, 5, 70
+	want := 16
+	pr.ExecuteMuls2()
+	got := pr.GetRegisterBank().GetRegisterBank()["R6"].GetDecValue()
+
+	if got != want {
+		t.Errorf("ExecuteMuls2 \n got: %v \n want %v \n", got, want)
 	}
 }
 

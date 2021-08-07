@@ -58,46 +58,46 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 		{"ADDS", "2"}: program.ExecuteAdds2,
 		{"SUBS", "1"}: program.ExecuteSubs1,
 		{"SUBS", "2"}: program.ExecuteSubs2,
-		//{"MULS", "1"}: executeunit.ExecuteMuls1,
-		//{"MULS", "2"}: executeunit.ExecuteMuls2,
+		{"MULS", "1"}: program.ExecuteMuls1,
+		{"MULS", "2"}: program.ExecuteMuls2,
 		//{"ANDS", "1"}: program.ExecuteAnds1,
 		//{"ANDS", "2"}: program.ExecuteAnds2,
-		//{"ORRS", "1"}: executeunit.ExecuteOrrs1,
-		//{"ORRS", "2"}: executeunit.ExecuteOrrs2,
-		//{"EORS", "1"}: executeunit.ExecuteEors1,
-		//{"EORS", "2"}: executeunit.ExecuteEors2,
-		//{"BICS", "1"}: executeunit.ExecuteBics1,
-		//{"BICS", "2"}: executeunit.ExecuteBics2,
-		//{"ASRS", "1"}: executeunit.ExecuteAsrs1,
-		//{"ASRS", "2"}: executeunit.ExecuteAsrs2,
-		//{"LSLS", "1"}: executeunit.ExecuteLsls1,
-		//{"LSLS", "2"}: executeunit.ExecuteLsls2,
-		//{"LSRS", "1"}: executeunit.ExecuteLsrs1,
-		//{"LSRS", "2"}: executeunit.ExecuteLsrs2,
-		//{"RORS", "1"}: executeunit.ExecuteRors1,
-		//{"RORS", "2"}: executeunit.ExecuteRors2,
+		//{"ORRS", "1"}: program.ExecuteOrrs1,
+		//{"ORRS", "2"}: program.ExecuteOrrs2,
+		//{"EORS", "1"}: program.ExecuteEors1,
+		//{"EORS", "2"}: program.ExecuteEors2,
+		//{"BICS", "1"}: program.ExecuteBics1,
+		//{"BICS", "2"}: program.ExecuteBics2,
+		//{"ASRS", "1"}: program.ExecuteAsrs1,
+		//{"ASRS", "2"}: program.ExecuteAsrs2,
+		//{"LSLS", "1"}: program.ExecuteLsls1,
+		//{"LSLS", "2"}: program.ExecuteLsls2,
+		//{"LSRS", "1"}: program.ExecuteLsrs1,
+		//{"LSRS", "2"}: program.ExecuteLsrs2,
+		//{"RORS", "1"}: program.ExecuteRors1,
+		//{"RORS", "2"}: program.ExecuteRors2,
 
 		// Comparison
-		//{"CMN", "1"}: executeunit.ExecuteCmn1,
-		//{"CMN", "2"}: executeunit.ExecuteCms2,
-		//{"CMP", "1"}: executeunit.ExecuteCmp1,
-		//{"CMP", "2"}: executeunit.ExecuteCmp2,
+		//{"CMN", "1"}: program.ExecuteCmn1,
+		//{"CMN", "2"}: program.ExecuteCms2,
+		//{"CMP", "1"}: program.ExecuteCmp1,
+		//{"CMP", "2"}: program.ExecuteCmp2,
 
 		// Bypass
 		//{"MOVS", "1"}: program.ExecuteMovs1,
 		//{"MOVS", "2"}: program.ExecuteMovs2,
-		//{"BEQ", "1"}: executeunit.ExecuteBeq1,
-		//{"BEQ", "2"}: executeunit.ExecuteBeq2,
-		//{"BNE", "1"}: executeunit.ExecuteBne1,
-		//{"BNE", "2"}: executeunit.ExecuteBne2,
-		//{"BLT", "1"}: executeunit.ExecuteBlt1,
-		//{"BLT", "2"}: executeunit.ExecuteBlt2,
-		//{"BL", "1"}: executeunit.ExecuteBl1,
-		//{"BL", "2"}: executeunit.ExecuteBl2,
-		//{"BX", "1"}: executeunit.ExecuteBx1,
-		//{"BX", "2"}: executeunit.ExecuteBx2,
-		//{"B", "1"}: executeunit.ExecuteB1,
-		//{"B", "2"}: executeunit.ExecuteB2,
+		//{"BEQ", "1"}: program.ExecuteBeq1,
+		//{"BEQ", "2"}: program.ExecuteBeq2,
+		//{"BNE", "1"}: program.ExecuteBne1,
+		//{"BNE", "2"}: program.ExecuteBne2,
+		//{"BLT", "1"}: program.ExecuteBlt1,
+		//{"BLT", "2"}: program.ExecuteBlt2,
+		//{"BL", "1"}: program.ExecuteBl1,
+		//{"BL", "2"}: program.ExecuteBl2,
+		//{"BX", "1"}: program.ExecuteBx1,
+		//{"BX", "2"}: program.ExecuteBx2,
+		//{"B", "1"}: program.ExecuteB1,
+		//{"B", "2"}: program.ExecuteB2,
 
 		// Load and Store
 		{"LDR", "1"}: program.ExecuteLdr1,
@@ -218,6 +218,34 @@ func (p *Program) ExecuteSubs2() {
 	p.ula.SetValue1(value_reg1)
 	p.ula.SetValue2(int(data))
 	result := p.ula.Sub()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteMuls1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Mult()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteMuls2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Mult()
 	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
