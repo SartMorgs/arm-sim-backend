@@ -1,21 +1,21 @@
 package program
 
-import(
+import (
 	"strconv"
 	//"fmt"
 
-	"arm/memmory"
-	"arm/registerbank"
-	"arm/ula"
-	"arm/programcounter"
 	"arm/controller"
 	"arm/interruption"
 	"arm/io"
+	"arm/memmory"
+	"arm/programcounter"
+	"arm/registerbank"
+	"arm/ula"
 )
 
-type Program struct{
-	rom *memmory.CodeMemmory
-	ram *memmory.DataMemmory
+type Program struct {
+	rom           *memmory.CodeMemmory
+	ram           *memmory.DataMemmory
 	deviceMemmory *memmory.DeviceMemmory
 
 	registerBank *registerbank.RegisterBank
@@ -33,7 +33,7 @@ type Program struct{
 	behaviorInstruction map[[2]string]func()
 }
 
-func NewProgram(rom *memmory.CodeMemmory) *Program{
+func NewProgram(rom *memmory.CodeMemmory) *Program {
 	program := new(Program)
 	program.rom = rom
 	program.ram = memmory.NewDataMemmory()
@@ -52,110 +52,120 @@ func NewProgram(rom *memmory.CodeMemmory) *Program{
 	program.deviceList = make(map[string]*io.Device)
 	program.deviceList["standard"] = io.NewDevice("standard", "0x0", "00000000000000000000000000000000")
 
-	
 	program.behaviorInstruction = map[[2]string]func(){
 		// Arithmetic
 		{"ADDS", "1"}: program.ExecuteAdds1,
-		//{"ADDS", "2"}: program.ExecuteAdds2,
+		{"ADDS", "2"}: program.ExecuteAdds2,
 		{"SUBS", "1"}: program.ExecuteSubs1,
-		//{"SUBS", "2"}: program.ExecuteSubs2,
-		//{"MULS", "1"}: executeunit.ConfigForMuls1,
-		//{"MULS", "2"}: executeunit.ConfigForMuls2,
+		{"SUBS", "2"}: program.ExecuteSubs2,
+		{"MULS", "1"}: program.ExecuteMuls1,
+		{"MULS", "2"}: program.ExecuteMuls2,
 		//{"ANDS", "1"}: program.ExecuteAnds1,
 		//{"ANDS", "2"}: program.ExecuteAnds2,
-		//{"ORRS", "1"}: executeunit.ConfigForOrrs1,
-		//{"ORRS", "2"}: executeunit.ConfigForOrrs2,
-		//{"EORS", "1"}: executeunit.ConfigForEors1,
-		//{"EORS", "2"}: executeunit.ConfigForEors2,
-		//{"BICS", "1"}: executeunit.ConfigForBics1,
-		//{"BICS", "2"}: executeunit.ConfigForBics2,
-		//{"ASRS", "1"}: executeunit.ConfigForAsrs1,
-		//{"ASRS", "2"}: executeunit.ConfigForAsrs2,
-		//{"LSLS", "1"}: executeunit.ConfigForLsls1,
-		//{"LSLS", "2"}: executeunit.ConfigForLsls2,
-		//{"LSRS", "1"}: executeunit.ConfigForLsrs1,
-		//{"LSRS", "2"}: executeunit.ConfigForLsrs2,
-		//{"RORS", "1"}: executeunit.ConfigForRors1,
-		//{"RORS", "2"}: executeunit.ConfigForRors2,
+		//{"ORRS", "1"}: program.ExecuteOrrs1,
+		//{"ORRS", "2"}: program.ExecuteOrrs2,
+		//{"EORS", "1"}: program.ExecuteEors1,
+		//{"EORS", "2"}: program.ExecuteEors2,
+		//{"BICS", "1"}: program.ExecuteBics1,
+		//{"BICS", "2"}: program.ExecuteBics2,
+		//{"ASRS", "1"}: program.ExecuteAsrs1,
+		//{"ASRS", "2"}: program.ExecuteAsrs2,
+		//{"LSLS", "1"}: program.ExecuteLsls1,
+		//{"LSLS", "2"}: program.ExecuteLsls2,
+		//{"LSRS", "1"}: program.ExecuteLsrs1,
+		//{"LSRS", "2"}: program.ExecuteLsrs2,
+		//{"RORS", "1"}: program.ExecuteRors1,
+		//{"RORS", "2"}: program.ExecuteRors2,
 
 		// Comparison
-		//{"CMN", "1"}: executeunit.ConfigForCmn1,
-		//{"CMN", "2"}: executeunit.ConfigForCms2,
-		//{"CMP", "1"}: executeunit.ConfigForCmp1,
-		//{"CMP", "2"}: executeunit.ConfigForCmp2,
+		//{"CMN", "1"}: program.ExecuteCmn1,
+		//{"CMN", "2"}: program.ExecuteCms2,
+		//{"CMP", "1"}: program.ExecuteCmp1,
+		//{"CMP", "2"}: program.ExecuteCmp2,
 
 		// Bypass
 		//{"MOVS", "1"}: program.ExecuteMovs1,
 		//{"MOVS", "2"}: program.ExecuteMovs2,
-		//{"BEQ", "1"}: executeunit.ConfigForBeq1,
-		//{"BEQ", "2"}: executeunit.ConfigForBeq2,
-		//{"BNE", "1"}: executeunit.ConfigForBne1,
-		//{"BNE", "2"}: executeunit.ConfigForBne2,
-		//{"BLT", "1"}: executeunit.ConfigForBlt1,
-		//{"BLT", "2"}: executeunit.ConfigForBlt2,
-		//{"BL", "1"}: executeunit.ConfigForBl1,
-		//{"BL", "2"}: executeunit.ConfigForBl2,
-		//{"BX", "1"}: executeunit.ConfigForBx1,
-		//{"BX", "2"}: executeunit.ConfigForBx2,
+		//{"BEQ", "1"}: program.ExecuteBeq1,
+		//{"BEQ", "2"}: program.ExecuteBeq2,
+		//{"BNE", "1"}: program.ExecuteBne1,
+		//{"BNE", "2"}: program.ExecuteBne2,
+		//{"BLT", "1"}: program.ExecuteBlt1,
+		//{"BLT", "2"}: program.ExecuteBlt2,
+		//{"BL", "1"}: program.ExecuteBl1,
+		//{"BL", "2"}: program.ExecuteBl2,
+		//{"BX", "1"}: program.ExecuteBx1,
+		//{"BX", "2"}: program.ExecuteBx2,
+		//{"B", "1"}: program.ExecuteB1,
+		//{"B", "2"}: program.ExecuteB2,
 
 		// Load and Store
-		//{"LDR", "1"}: program.ExecuteLdr1,
+		{"LDR", "1"}: program.ExecuteLdr1,
 		{"LDR", "2"}: program.ExecuteLdr2,
-		//{"STR", "1"}: program.ExecuteStr1,
+		{"STR", "1"}: program.ExecuteStr1,
 		{"STR", "2"}: program.ExecuteStr2,
 
 		// Nothing
 		{"NOP", "1"}: program.ExecuteNop,
 	}
-	
 
 	return program
 }
 
-func (p *Program) GetCodeMemmory() *memmory.CodeMemmory{
+func (p *Program) GetCodeMemmory() *memmory.CodeMemmory {
 	return p.rom
 }
 
-func (p *Program) GetDataMemmory() *memmory.DataMemmory{
+func (p *Program) GetDataMemmory() *memmory.DataMemmory {
 	return p.ram
 }
 
-func (p *Program) GetDeviceMemmory() *memmory.DeviceMemmory{
+func (p *Program) GetDeviceMemmory() *memmory.DeviceMemmory {
 	return p.deviceMemmory
 }
 
-func (p *Program) GetRegisterBank() *registerbank.RegisterBank{
+func (p *Program) GetRegisterBank() *registerbank.RegisterBank {
 	return p.registerBank
 }
 
-func (p *Program) GetUla() *ula.Ula{
+func (p *Program) GetUla() *ula.Ula {
 	return p.ula
 }
 
-func (p *Program) GetProgramCounter() *programcounter.ProgramCounter{
+func (p *Program) GetProgramCounter() *programcounter.ProgramCounter {
 	return p.pc
 }
 
-func (p *Program) GetController() *controller.Controller{
+func (p *Program) GetController() *controller.Controller {
 	return p.controller
 }
 
-func (p *Program) GetInterruptionBank() *interruption.InterruptionBank{
+func (p *Program) GetInterruptionBank() *interruption.InterruptionBank {
 	return p.interruptionBank
 }
 
-func (p *Program) GetDevice(name string) *io.Device{
+func (p *Program) GetDevice(name string) *io.Device {
 	return p.deviceList[name]
 }
 
-func (p *Program) ExecuteLdr2(){
+func (p *Program) ExecuteLdr1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	memmory_addr := p.registerBank.GetRegisterBank()[source_register1_r].GetHexValue()
+	value := p.ram.GetDataMemmoryList()[memmory_addr].GetDecValue()
+	p.registerBank.ChangeRegister(target_register_r, value)
+}
+
+func (p *Program) ExecuteLdr2() {
 	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
 	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
 	target_register_r := "R" + strconv.Itoa(int(target_register))
 	p.registerBank.ChangeRegister(target_register_r, int(address))
 }
 
-func (p *Program) ExecuteAdds1(){
+func (p *Program) ExecuteAdds1() {
 	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
 	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
 	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
@@ -170,7 +180,20 @@ func (p *Program) ExecuteAdds1(){
 	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
-func (p *Program) ExecuteSubs1(){
+func (p *Program) ExecuteAdds2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Add()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteSubs1() {
 	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
 	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
 	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
@@ -185,7 +208,58 @@ func (p *Program) ExecuteSubs1(){
 	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
-func (p *Program) ExecuteStr2(){
+func (p *Program) ExecuteSubs2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Sub()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteMuls1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Mult()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteMuls2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Mult()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteStr1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	memmory_addr := p.registerBank.GetRegisterBank()[source_register1_r].GetHexValue()
+	value := p.registerBank.GetRegisterBank()[target_register_r].GetDecValue()
+	p.ram.ChangeField(memmory_addr, value)
+}
+
+func (p *Program) ExecuteStr2() {
 	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
 	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
 	target_register_r := "R" + strconv.Itoa(int(target_register))
@@ -194,11 +268,11 @@ func (p *Program) ExecuteStr2(){
 	p.ram.ChangeField(address_hex, value_register)
 }
 
-func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string){
+func (p *Program) ExecuteFunctionForInstruction(inst string, type_inst string) {
 	x := [2]string{inst, type_inst}
 	p.behaviorInstruction[x]()
 }
 
-func (p *Program) ExecuteNop(){
+func (p *Program) ExecuteNop() {
 
 }
