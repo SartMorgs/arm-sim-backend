@@ -1,12 +1,19 @@
 package ula
- 
+
+import "strconv"
+
 type Ula struct {
 	value1 int
 	value2 int
 	result int
+
+	negativeResultFlag bool
+	zeroResultFlag     bool
+	carryResultFlag    bool
+	overflowResultFlag bool
 }
 
-func NewUla() *Ula{
+func NewUla() *Ula {
 	ula := new(Ula)
 
 	ula.value1 = 0
@@ -16,33 +23,93 @@ func NewUla() *Ula{
 	return ula
 }
 
-func (u *Ula) GetValue1() int{
+func (u *Ula) GetValue1() int {
 	return u.value1
 }
 
-func (u *Ula) GetValue2() int{
+func (u *Ula) GetValue2() int {
 	return u.value2
 }
 
-func (u *Ula) SetValue1(val1 int){
+func (u *Ula) SetValue1(val1 int) {
 	u.value1 = val1
 }
 
-func (u *Ula) SetValue2(val2 int){
+func (u *Ula) SetValue2(val2 int) {
 	u.value2 = val2
 }
 
-func (u *Ula) Add() int{
+func (u *Ula) Add() int {
 	u.result = u.value1 + u.value2
 	return u.result
 }
 
-func (u *Ula) Sub() int{
+func (u *Ula) Sub() int {
 	u.result = u.value1 - u.value2
 	return u.result
 }
 
-func (u *Ula) Mult() int{
-	u.result = u.value1 * u.value2 
+func (u *Ula) Mult() int {
+	u.result = u.value1 * u.value2
 	return u.result
+}
+
+func (u *Ula) And() int {
+	u.result = u.value1 & u.value2
+	return u.result
+}
+
+func (u *Ula) Or() int {
+	u.result = u.value1 | u.value2
+	return u.result
+}
+
+func (u *Ula) Eor() int {
+	u.result = u.value1 ^ u.value2
+	return u.result
+}
+
+func (u *Ula) Bic() int {
+	u.result = u.value1 &^ u.value2
+	return u.result
+}
+
+func (u *Ula) Asr() int {
+	u.result = u.value1 << u.value2
+	return u.result
+}
+
+func (u *Ula) Lsl() int {
+	u.result = u.value1 << u.value2
+	return u.result
+}
+
+func (u *Ula) Lsr() int {
+	u.result = u.value1 >> u.value2
+	return u.result
+}
+
+func (u *Ula) Ror() int {
+	u.result = u.value1 >> u.value2
+	return u.result
+}
+
+func (u *Ula) negativeResult() {
+	u.negativeResultFlag = (u.result < 0)
+}
+
+func (u *Ula) zeroResult() {
+	u.zeroResultFlag = (u.result == 0)
+}
+
+func (u *Ula) carryResult() {
+	len_value1 := len(strconv.FormatInt(int64(u.value1), 2))
+	len_result := len(strconv.FormatInt(int64(u.result), 2))
+	u.carryResultFlag = (len_value1 > len_result)
+}
+
+func (u *Ula) overflowResult() {
+	const max_size_word = 2147483647
+
+	u.overflowResultFlag = (u.result > max_size_word)
 }
