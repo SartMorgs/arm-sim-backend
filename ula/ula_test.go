@@ -49,6 +49,54 @@ func TestGetValue2(t *testing.T) {
 	}
 }
 
+func TestGetNegativeResultFlag(t *testing.T) {
+	want := true
+
+	ula1.negativeResultFlag = true
+
+	got := ula1.GetNegativeResultFlag()
+
+	if got != want {
+		t.Errorf("GetNegativeResultFlag \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetZeroResultFlag(t *testing.T) {
+	want := true
+
+	ula1.zeroResultFlag = true
+
+	got := ula1.GetZeroResultFlag()
+
+	if got != want {
+		t.Errorf("GetZeroResultFlag \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetCarryResultFlag(t *testing.T) {
+	want := true
+
+	ula1.carryResultFlag = true
+
+	got := ula1.GetCarryResultFlag()
+
+	if got != want {
+		t.Errorf("GetCarryResultFlag \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestGetOverflowResultFlag(t *testing.T) {
+	want := true
+
+	ula1.overflowResultFlag = true
+
+	got := ula1.GetOverflowResultFlag()
+
+	if got != want {
+		t.Errorf("GetOverflowResultFlag \n got: %v \n want %v \n", got, want)
+	}
+}
+
 func TestAdd(t *testing.T) {
 	want := 25
 
@@ -199,7 +247,7 @@ func TestCmp(t *testing.T) {
 	ula1.Cmp()
 	want := (ula1.result == 0)
 
-	ula1.allResultFlag()
+	ula1.AllResultFlag()
 	got := ula1.zeroResultFlag
 
 	if got != want {
@@ -214,7 +262,7 @@ func TestCmn(t *testing.T) {
 	ula1.Cmn()
 	want := (ula1.result == 0)
 
-	ula1.allResultFlag()
+	ula1.AllResultFlag()
 	got := ula1.zeroResultFlag
 
 	if got != want {
@@ -265,7 +313,7 @@ func TestCarryResultFlag(t *testing.T) {
 	len_value1 := len("1111")
 	len_result := len(strconv.FormatInt(int64(result), 2))
 
-	want := (len_value1 > len_result)
+	want := (len_result > len_value1)
 
 	ula1.carryResult()
 	got := ula1.carryResultFlag
@@ -304,7 +352,7 @@ func TestAllResultFlag(t *testing.T) {
 	want_carry := (len_value1 > len_result)
 	want_overflow := (result > 2147483647)
 
-	ula1.allResultFlag()
+	ula1.AllResultFlag()
 	got_negative := ula1.negativeResultFlag
 	got_zero := ula1.zeroResultFlag
 	got_carry := ula1.carryResultFlag
