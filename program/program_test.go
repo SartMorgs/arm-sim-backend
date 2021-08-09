@@ -26,6 +26,59 @@ var test_program []string = []string{
 	"11010100111000000000000100000000"} // STR 7, #2
 var rom_teste *memmory.CodeMemmory
 
+func TestInitialConfigurations(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	regbk := registerbank.NewRegisterBank()
+	regbk.GetRegisterBank()["R13"].SetRegisterName("SP")
+	regbk.GetRegisterBank()["R14"].SetRegisterName("LR")
+	regbk.GetRegisterBank()["R15"].SetRegisterName("PC")
+	regbk.GetRegisterBank()["R16"].SetRegisterName("PSR")
+
+	want := regbk.GetRegisterBankJson()
+
+	pr.initialConfigurations()
+
+	got := pr.registerBank.GetRegisterBankJson()
+
+	if got != want {
+		t.Errorf("InitialConfigurations \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestSetPSRRegister(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	regbk := registerbank.NewRegisterBank()
+	regbk.ChangeRegister("R16", 1073741824)
+
+	want := regbk.GetRegisterBankJson()
+
+	pr.ula.SetValue1(36)
+	pr.ula.SetValue2(36)
+	pr.ula.Cmp()
+	pr.ula.AllResultFlag()
+	pr.setPSRRegister()
+
+	got := pr.registerBank.GetRegisterBankJson()
+
+	if got != want {
+		t.Errorf("SetPSRRegister \n got: %v \n want %v \n", got, want)
+	}
+}
+
 //-----------------------------------------------------------------------------------
 // Program execution
 //-----------------------------------------------------------------------------------
