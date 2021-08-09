@@ -105,6 +105,9 @@ func TestExecuteFunctionForInstruction(t *testing.T) {
 	}
 }
 
+//-----------------------------------------------------------------------------------
+// Arithmetic
+//-----------------------------------------------------------------------------------
 func TestExecuteAdds1(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
@@ -644,6 +647,295 @@ func TestExecuteRors2(t *testing.T) {
 	}
 }
 
+//-----------------------------------------------------------------------------------
+// Comparison
+//-----------------------------------------------------------------------------------
+func TestExecuteCmn1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", -36)
+	pr.registerBank.ChangeRegister("R1", -36)
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetSourceRegister2("00001")
+
+	// CMN 5, 1
+	want := "1000000000000000000000000000000"
+	pr.ExecuteCmn1()
+	got := pr.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if got != want {
+		t.Errorf("ExecuteCmn1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteCmn2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", -36)
+	pr.controller.GetExecuteUnit().SetTargetRegister("00110")
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetValueInstruction("-100100")
+
+	// CMN 5, -36
+	want := "1000000000000000000000000000000"
+	pr.ExecuteCmn2()
+	got := pr.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if got != want {
+		t.Errorf("ExecuteCmn2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteCmp1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", 36)
+	pr.registerBank.ChangeRegister("R1", 36)
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetSourceRegister2("00001")
+
+	// CMP 5, 1
+	want := "1000000000000000000000000000000"
+	pr.ExecuteCmp1()
+	got := pr.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if got != want {
+		t.Errorf("ExecuteCmp1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteCmp2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R5", 36)
+	pr.controller.GetExecuteUnit().SetTargetRegister("00110")
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00101")
+	pr.controller.GetExecuteUnit().SetValueInstruction("100100")
+
+	// CMP 5, 36
+	want := "1000000000000000000000000000000"
+	pr.ExecuteCmp2()
+	got := pr.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if got != want {
+		t.Errorf("ExecuteCmp2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+//-----------------------------------------------------------------------------------
+// Bypass
+//-----------------------------------------------------------------------------------
+func TestExecuteMovs1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+
+	pr := NewProgram(rom_teste)
+
+	pr.registerBank.ChangeRegister("R1", 15)
+	pr.controller.GetExecuteUnit().SetTargetRegister("00010")
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00001")
+
+	// MOVS R2, R1
+	want := 15
+	pr.ExecuteMovs1()
+	got := pr.registerBank.GetRegisterBank()["R2"].GetDecValue()
+
+	if got != want {
+		t.Errorf("ExecuteMovs1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteMovs2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetTargetRegister("00010")
+	pr.controller.GetExecuteUnit().SetValueInstruction("1111")
+
+	// MOVS R2, 70
+	want := 15
+	pr.ExecuteMovs2()
+	got := pr.registerBank.GetRegisterBank()["R2"].GetDecValue()
+
+	if got != want {
+		t.Errorf("ExecuteMovs2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBeq1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00001")
+
+	pr.registerBank.ChangeRegister("R1", 4196)
+	pr.registerBank.ChangeRegister("R16", 1073741824)
+
+	// BEQ R1
+	want := 4196
+	pr.ExecuteBeq1()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBeq1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBeq2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetValueInstruction("1000001100100")
+	pr.registerBank.ChangeRegister("R16", 1073741824)
+
+	// BEQ 4196
+	want := 4196
+	pr.ExecuteBeq2()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBeq2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBne1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00001")
+
+	pr.registerBank.ChangeRegister("R1", 4196)
+	pr.registerBank.ChangeRegister("R16", 0)
+
+	// BNE R1
+	want := 4196
+	pr.ExecuteBne1()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBne1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBne2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetValueInstruction("1000001100100")
+	pr.registerBank.ChangeRegister("R16", 0)
+
+	// BNE 4196
+	want := 4196
+	pr.ExecuteBne2()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBne2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBlt1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetSourceRegister1("00001")
+
+	pr.registerBank.ChangeRegister("R1", 4196)
+	pr.registerBank.ChangeRegister("R16", 2147483648)
+
+	// BLT R1
+	want := 4196
+	pr.ExecuteBlt1()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBlt1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBlt2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	pr.controller.GetExecuteUnit().SetValueInstruction("1000001100100")
+	pr.registerBank.ChangeRegister("R16", 2147483648)
+
+	// BLT 4196
+	want := 4196
+	pr.ExecuteBlt2()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBlt2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+//-----------------------------------------------------------------------------------
+// Load and Store
+//-----------------------------------------------------------------------------------
 func TestExecuteLdr1(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
