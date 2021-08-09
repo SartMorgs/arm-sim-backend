@@ -192,6 +192,36 @@ func TestRor(t *testing.T) {
 	}
 }
 
+func TestCmp(t *testing.T) {
+	ula1.value1 = 36
+	ula1.value2 = 36
+
+	ula1.Cmp()
+	want := (ula1.result == 0)
+
+	ula1.allResultFlag()
+	got := ula1.zeroResultFlag
+
+	if got != want {
+		t.Errorf("Cmp \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestCmn(t *testing.T) {
+	ula1.value1 = -36
+	ula1.value2 = -36
+
+	ula1.Cmn()
+	want := (ula1.result == 0)
+
+	ula1.allResultFlag()
+	got := ula1.zeroResultFlag
+
+	if got != want {
+		t.Errorf("Cmn \n got: %v \n want %v \n", got, want)
+	}
+}
+
 // ------------------------------------------------------------------------------
 // REGISTRATOR OF ULA STATE
 
@@ -258,5 +288,29 @@ func TestOverflowResultFlag(t *testing.T) {
 
 	if got != want {
 		t.Errorf("OverflowResultFlag \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestAllResultFlag(t *testing.T) {
+	ula1.value1 = 36
+	ula1.value2 = 36
+
+	len_value1 := len("100100")
+	len_result := len("100100")
+
+	result := ula1.Sub()
+	want_negative := (result < 0)
+	want_zero := (result == 0)
+	want_carry := (len_value1 > len_result)
+	want_overflow := (result > 2147483647)
+
+	ula1.allResultFlag()
+	got_negative := ula1.negativeResultFlag
+	got_zero := ula1.zeroResultFlag
+	got_carry := ula1.carryResultFlag
+	got_overflow := ula1.overflowResultFlag
+
+	if (got_negative != want_negative) && (got_zero != want_zero) && (got_carry != want_carry) && (got_overflow != want_overflow) {
+		t.Errorf("AllResultFlag \n got_negative: %v \n want_negative %v \n got_zero %v \n want_zero %v \n got_carry %v \n want_carry %v \n got_overflow %v \n want_overflow %v \n", got_negative, want_negative, got_zero, want_zero, got_carry, want_carry, got_overflow, want_overflow)
 	}
 }

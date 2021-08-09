@@ -94,6 +94,14 @@ func (u *Ula) Ror() int {
 	return u.result
 }
 
+func (u *Ula) Cmp() {
+	u.result = u.value1 - u.value2
+}
+
+func (u *Ula) Cmn() {
+	u.result = u.value1 + u.value2
+}
+
 func (u *Ula) negativeResult() {
 	u.negativeResultFlag = (u.result < 0)
 }
@@ -112,4 +120,11 @@ func (u *Ula) overflowResult() {
 	const max_size_word = 2147483647
 
 	u.overflowResultFlag = (u.result > max_size_word)
+}
+
+func (u *Ula) allResultFlag() {
+	u.negativeResult()
+	u.zeroResult()
+	u.carryResult()
+	u.overflowResult()
 }
