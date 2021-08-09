@@ -60,22 +60,22 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 		{"SUBS", "2"}: program.ExecuteSubs2,
 		{"MULS", "1"}: program.ExecuteMuls1,
 		{"MULS", "2"}: program.ExecuteMuls2,
-		//{"ANDS", "1"}: program.ExecuteAnds1,
-		//{"ANDS", "2"}: program.ExecuteAnds2,
-		//{"ORRS", "1"}: program.ExecuteOrrs1,
-		//{"ORRS", "2"}: program.ExecuteOrrs2,
-		//{"EORS", "1"}: program.ExecuteEors1,
-		//{"EORS", "2"}: program.ExecuteEors2,
-		//{"BICS", "1"}: program.ExecuteBics1,
-		//{"BICS", "2"}: program.ExecuteBics2,
-		//{"ASRS", "1"}: program.ExecuteAsrs1,
-		//{"ASRS", "2"}: program.ExecuteAsrs2,
-		//{"LSLS", "1"}: program.ExecuteLsls1,
-		//{"LSLS", "2"}: program.ExecuteLsls2,
-		//{"LSRS", "1"}: program.ExecuteLsrs1,
-		//{"LSRS", "2"}: program.ExecuteLsrs2,
-		//{"RORS", "1"}: program.ExecuteRors1,
-		//{"RORS", "2"}: program.ExecuteRors2,
+		{"ANDS", "1"}: program.ExecuteAnds1,
+		{"ANDS", "2"}: program.ExecuteAnds2,
+		{"ORRS", "1"}: program.ExecuteOrrs1,
+		{"ORRS", "2"}: program.ExecuteOrrs2,
+		{"EORS", "1"}: program.ExecuteEors1,
+		{"EORS", "2"}: program.ExecuteEors2,
+		{"BICS", "1"}: program.ExecuteBics1,
+		{"BICS", "2"}: program.ExecuteBics2,
+		{"ASRS", "1"}: program.ExecuteAsrs1,
+		{"ASRS", "2"}: program.ExecuteAsrs2,
+		{"LSLS", "1"}: program.ExecuteLsls1,
+		{"LSLS", "2"}: program.ExecuteLsls2,
+		{"LSRS", "1"}: program.ExecuteLsrs1,
+		{"LSRS", "2"}: program.ExecuteLsrs2,
+		{"RORS", "1"}: program.ExecuteRors1,
+		{"RORS", "2"}: program.ExecuteRors2,
 
 		// Comparison
 		//{"CMN", "1"}: program.ExecuteCmn1,
@@ -246,6 +246,230 @@ func (p *Program) ExecuteMuls2() {
 	p.ula.SetValue1(value_reg1)
 	p.ula.SetValue2(int(data))
 	result := p.ula.Mult()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteAnds1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.And()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteAnds2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.And()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteOrrs1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Or()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteOrrs2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Or()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteEors1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Eor()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteEors2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Eor()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteBics1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Bic()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteBics2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Bic()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteAsrs1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Asr()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteAsrs2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Asr()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteLsls1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Lsl()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteLsls2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Lsl()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteLsrs1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Lsr()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteLsrs2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Lsr()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteRors1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	result := p.ula.Ror()
+	p.registerBank.ChangeRegister(target_register_r, result)
+}
+
+func (p *Program) ExecuteRors2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	result := p.ula.Ror()
 	p.registerBank.ChangeRegister(target_register_r, result)
 }
 
