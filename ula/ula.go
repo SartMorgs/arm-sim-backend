@@ -20,6 +20,11 @@ func NewUla() *Ula {
 	ula.value2 = 0
 	ula.result = 0
 
+	ula.negativeResultFlag = false
+	ula.zeroResultFlag = false
+	ula.carryResultFlag = false
+	ula.overflowResultFlag = false
+
 	return ula
 }
 
@@ -29,6 +34,22 @@ func (u *Ula) GetValue1() int {
 
 func (u *Ula) GetValue2() int {
 	return u.value2
+}
+
+func (u *Ula) GetNegativeResultFlag() bool {
+	return u.negativeResultFlag
+}
+
+func (u *Ula) GetZeroResultFlag() bool {
+	return u.zeroResultFlag
+}
+
+func (u *Ula) GetCarryResultFlag() bool {
+	return u.carryResultFlag
+}
+
+func (u *Ula) GetOverflowResultFlag() bool {
+	return u.overflowResultFlag
 }
 
 func (u *Ula) SetValue1(val1 int) {
@@ -113,7 +134,7 @@ func (u *Ula) zeroResult() {
 func (u *Ula) carryResult() {
 	len_value1 := len(strconv.FormatInt(int64(u.value1), 2))
 	len_result := len(strconv.FormatInt(int64(u.result), 2))
-	u.carryResultFlag = (len_value1 > len_result)
+	u.carryResultFlag = (len_result > len_value1)
 }
 
 func (u *Ula) overflowResult() {
@@ -122,7 +143,7 @@ func (u *Ula) overflowResult() {
 	u.overflowResultFlag = (u.result > max_size_word)
 }
 
-func (u *Ula) allResultFlag() {
+func (u *Ula) AllResultFlag() {
 	u.negativeResult()
 	u.zeroResult()
 	u.carryResult()

@@ -112,6 +112,30 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 	return program
 }
 
+func (p *Program) initialConfigurations() {
+	p.registerBank.GetRegisterBank()["R13"].SetRegisterName("SP")
+	p.registerBank.GetRegisterBank()["R14"].SetRegisterName("LR")
+	p.registerBank.GetRegisterBank()["R15"].SetRegisterName("PC")
+	p.registerBank.GetRegisterBank()["R16"].SetRegisterName("PSR")
+}
+
+func (p *Program) setPSRRegister() {
+
+	register_form := make(map[bool]string)
+	register_form = map[bool]string{
+		true:  "1",
+		false: "0"}
+
+	register_string := register_form[p.ula.GetNegativeResultFlag()] +
+		register_form[p.ula.GetZeroResultFlag()] +
+		register_form[p.ula.GetCarryResultFlag()] +
+		register_form[p.ula.GetOverflowResultFlag()] +
+		"0000000000000000000000000000"
+
+	register_int, _ := strconv.ParseInt(register_string, 2, 64)
+	p.registerBank.ChangeRegister("R16", int(register_int))
+}
+
 func (p *Program) GetCodeMemmory() *memmory.CodeMemmory {
 	return p.rom
 }
