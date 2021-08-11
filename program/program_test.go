@@ -1,6 +1,7 @@
 package program
 
 import (
+	"arm/lifo"
 	"arm/memmory"
 	"arm/registerbank"
 
@@ -933,6 +934,50 @@ func TestExecuteBlt2(t *testing.T) {
 	}
 }
 
+func TestExecuteBl2(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	// 4102
+	pr.controller.GetExecuteUnit().SetValueInstruction("1000000000110")
+
+	want := 4102
+	pr.ExecuteBl2()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBl2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestExecuteBx1(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	// 2
+	pr.controller.GetExecuteUnit().SetSourceRegister1("01110")
+
+	pr.registerBank.ChangeRegister("R14", 2)
+
+	want := 2
+	pr.ExecuteBx1()
+	got := pr.pc.GetDecAddressMemmory()
+
+	if got != want {
+		t.Errorf("ExecuteBx1 \n got: %v \n want %v \n", got, want)
+	}
+}
+
 //-----------------------------------------------------------------------------------
 // Load and Store
 //-----------------------------------------------------------------------------------
@@ -1029,6 +1074,74 @@ func TestExecuteStr2(t *testing.T) {
 
 	if got != want {
 		t.Errorf("ExecuteStr2 \n got: %v \n want %v \n", got, want)
+	}
+}
+
+//-----------------------------------------------------------------------------------
+// Save and restore context
+//-----------------------------------------------------------------------------------
+func TestSaveContext(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	rg_bank := registerbank.NewRegisterBank()
+	ram := memmory.NewDataMemmory()
+	devicemem := memmory.NewDeviceMemmory()
+
+	want_rg_bank := rg_bank.GetRegisterBankJson()
+	want_ram := ram.GetDataMemmoryJson()
+	want_devicemem := devicemem.GetDeviceMemmoryJson()
+
+	pr.ExecuteBl2()
+
+	got_rg_bank := pr.lifo.GetLifo()[0].GetRegisterBank()
+	got_ram := pr.lifo.GetLifo()[0].GetDataMemmory()
+	got_devicemem := pr.lifo.GetLifo()[0].GetDeviceMemmory()
+
+	if (got_rg_bank != want_rg_bank) || (got_ram != want_ram) || (got_devicemem != want_devicemem) {
+		t.Errorf("SaveContext \n got_rg_bank: %v \n want_rg_bank %v \n got_ram: %v \n want_ram %v \n got_devicemem: %v \n want_devicemem %v \n", got_rg_bank, want_rg_bank, got_ram, want_ram, got_devicemem, want_devicemem)
+	}
+}
+
+func TestRestoreContext(t *testing.T) {
+	rom_teste := memmory.NewCodeMemmory()
+	var addressMemmoryCode string
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
+		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
+	}
+	pr := NewProgram(rom_teste)
+
+	rg_bank := registerbank.NewRegisterBank()
+	ram := memmory.NewDataMemmory()
+	devicemem := memmory.NewDeviceMemmory()
+
+	rg_bank.ChangeRegister("R1", 12)
+	rg_bank.ChangeRegister("R2", 4)
+
+	want_rg_bank := rg_bank.GetRegisterBankJson()
+	want_ram := ram.GetDataMemmoryJson()
+	want_devicemem := devicemem.GetDeviceMemmoryJson()
+
+	sv := lifo.NewSystemContext()
+	sv.SetRegisterBank(rg_bank.GetRegisterBankJson())
+	sv.SetDataMemmory(ram.GetDataMemmoryJson())
+	sv.SetDeviceMemmory(devicemem.GetDeviceMemmoryJson())
+
+	pr.lifo.Push(sv)
+	pr.ExecuteBx1()
+
+	got_rg_bank := pr.registerBank.GetRegisterBankJson()
+	got_ram := pr.ram.GetDataMemmoryJson()
+	got_devicemem := pr.deviceMemmory.GetDeviceMemmoryJson()
+
+	if (got_rg_bank != want_rg_bank) || (got_ram != want_ram) || (got_devicemem != want_devicemem) {
+		t.Errorf("RestoreContext \n got_rg_bank: %v \n want_rg_bank %v \n got_ram: %v \n want_ram %v \n got_devicemem: %v \n want_devicemem %v \n", len(got_rg_bank), len(want_rg_bank), len(got_ram), len(want_ram), len(got_devicemem), len(want_devicemem))
 	}
 }
 

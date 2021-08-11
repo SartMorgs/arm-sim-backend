@@ -2,17 +2,17 @@ package controller
 
 import "strconv"
 
-type ConfigForInstruction struct{
+type ConfigForInstruction struct {
 	targetRegisterBin string
 	targetRegisterDec int64
 
 	addressInstructionBin string
 	addressInstructionDec int64
 
-	sourceRegister1Bin string 
+	sourceRegister1Bin string
 	sourceRegister1Dec int64
 
-	sourceRegister2Bin string 
+	sourceRegister2Bin string
 	sourceRegister2Dec int64
 
 	valueInstructionBin string
@@ -25,15 +25,15 @@ type ConfigForInstruction struct{
 	restDec int64
 }
 
-type ExecuteUnit struct{
+type ExecuteUnit struct {
 	instruction string
 	ConfigForInstruction
-	config map[string]int64
+	config                 map[string]int64
 	functionInstructionMap map[[2]string]func()
-	instructionFormatMap map[string]func(string)
+	instructionFormatMap   map[string]func(string)
 }
 
-func NewExecuteUnit() *ExecuteUnit{
+func NewExecuteUnit() *ExecuteUnit {
 	executeunit := new(ExecuteUnit)
 	executeunit.config = make(map[string]int64)
 
@@ -54,7 +54,7 @@ func NewExecuteUnit() *ExecuteUnit{
 	cfi.restDec = 0
 
 	executeunit.ConfigForInstruction = *cfi
-	
+
 	executeunit.functionInstructionMap = map[[2]string]func(){
 		// Arithmetic
 		{"ADDS", "1"}: executeunit.ConfigForAdds1,
@@ -89,16 +89,16 @@ func NewExecuteUnit() *ExecuteUnit{
 		// Bypass
 		{"MOVS", "1"}: executeunit.ConfigForMovs1,
 		{"MOVS", "2"}: executeunit.ConfigForMovs2,
-		{"BEQ", "1"}: executeunit.ConfigForBeq1,
-		{"BEQ", "2"}: executeunit.ConfigForBeq2,
-		{"BNE", "1"}: executeunit.ConfigForBne1,
-		{"BNE", "2"}: executeunit.ConfigForBne2,
-		{"BLT", "1"}: executeunit.ConfigForBlt1,
-		{"BLT", "2"}: executeunit.ConfigForBlt2,
-		{"BL", "1"}: executeunit.ConfigForBl1,
-		{"BL", "2"}: executeunit.ConfigForBl2,
-		{"BX", "1"}: executeunit.ConfigForBx1,
-		//{"BX", "2"}: executeunit.ConfigForBx2,
+		{"BEQ", "1"}:  executeunit.ConfigForBeq1,
+		{"BEQ", "2"}:  executeunit.ConfigForBeq2,
+		{"BNE", "1"}:  executeunit.ConfigForBne1,
+		{"BNE", "2"}:  executeunit.ConfigForBne2,
+		{"BLT", "1"}:  executeunit.ConfigForBlt1,
+		{"BLT", "2"}:  executeunit.ConfigForBlt2,
+		{"BL", "1"}:   executeunit.ConfigForBl1,
+		{"BL", "2"}:   executeunit.ConfigForBl2,
+		{"BX", "1"}:   executeunit.ConfigForBx1,
+		//{"BX", "2"}:   executeunit.ConfigForBx2,
 		{"B", "1"}: executeunit.ConfigForB1,
 		{"B", "2"}: executeunit.ConfigForB2,
 
@@ -113,14 +113,14 @@ func NewExecuteUnit() *ExecuteUnit{
 	}
 
 	executeunit.instructionFormatMap = map[string]func(string){
-		"rd": executeunit.SetTargetRegister,
-		"rn": executeunit.SetSourceRegister1,
-		"rm": executeunit.SetSourceRegister2,
-		"data": executeunit.SetValueInstruction,
+		"rd":       executeunit.SetTargetRegister,
+		"rn":       executeunit.SetSourceRegister1,
+		"rm":       executeunit.SetSourceRegister2,
+		"data":     executeunit.SetValueInstruction,
 		"imediato": executeunit.SetAddressInstruction,
-		"label": executeunit.SetValueInstruction,
-		"address": executeunit.SetAddressInstruction,
-		"rest": executeunit.SetRest,
+		"label":    executeunit.SetValueInstruction,
+		"address":  executeunit.SetAddressInstruction,
+		"rest":     executeunit.SetRest,
 	}
 
 	executeunit.instruction = "00000000000000000000000000000000"
@@ -128,323 +128,322 @@ func NewExecuteUnit() *ExecuteUnit{
 	return executeunit
 }
 
-func (eu *ExecuteUnit) SetInstruction(inst string){
+func (eu *ExecuteUnit) SetInstruction(inst string) {
 	eu.instruction = inst
 }
 
-func (eu *ExecuteUnit) SetTargetRegister(target_reg string){
+func (eu *ExecuteUnit) SetTargetRegister(target_reg string) {
 	eu.targetRegisterBin = target_reg
 	eu.targetRegisterDec, _ = strconv.ParseInt(eu.targetRegisterBin, 2, 64)
 }
 
-func (eu *ExecuteUnit) SetAddressInstruction(addr string){
+func (eu *ExecuteUnit) SetAddressInstruction(addr string) {
 	eu.addressInstructionBin = addr
 	eu.addressInstructionDec, _ = strconv.ParseInt(eu.addressInstructionBin, 2, 64)
 }
 
-func (eu *ExecuteUnit) SetSourceRegister1(source_reg1 string){
+func (eu *ExecuteUnit) SetSourceRegister1(source_reg1 string) {
 	eu.sourceRegister1Bin = source_reg1
 	eu.sourceRegister1Dec, _ = strconv.ParseInt(eu.sourceRegister1Bin, 2, 64)
 }
 
-func (eu *ExecuteUnit) SetSourceRegister2(source_reg2 string){
+func (eu *ExecuteUnit) SetSourceRegister2(source_reg2 string) {
 	eu.sourceRegister2Bin = source_reg2
 	eu.sourceRegister2Dec, _ = strconv.ParseInt(eu.sourceRegister2Bin, 2, 64)
 }
 
-func (eu *ExecuteUnit) SetValueInstruction(value string){
+func (eu *ExecuteUnit) SetValueInstruction(value string) {
 	eu.valueInstructionBin = value
 	eu.valueInstructionDec, _ = strconv.ParseInt(eu.valueInstructionBin, 2, 64)
 }
 
-func (eu *ExecuteUnit) SetValueRegister(value_reg string){
+func (eu *ExecuteUnit) SetValueRegister(value_reg string) {
 	eu.valueRegisterBin = value_reg
 	eu.valueRegisterDec, _ = strconv.ParseInt(eu.valueRegisterBin, 2, 64)
 }
 
-func (eu * ExecuteUnit) SetRest(value_rest string){
+func (eu *ExecuteUnit) SetRest(value_rest string) {
 	eu.restBin = value_rest
 	eu.restDec, _ = strconv.ParseInt(eu.restBin, 2, 64)
 }
 
-func (eu *ExecuteUnit) GetTargetRegisterDec() int64{
+func (eu *ExecuteUnit) GetTargetRegisterDec() int64 {
 	return eu.targetRegisterDec
 }
 
-func (eu *ExecuteUnit) GetTargetRegisterBin() string{
+func (eu *ExecuteUnit) GetTargetRegisterBin() string {
 	return eu.targetRegisterBin
 }
 
-func (eu *ExecuteUnit) GetAddressInstructionDec() int64{
+func (eu *ExecuteUnit) GetAddressInstructionDec() int64 {
 	return eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) GetAddressInstructionBin() string{
+func (eu *ExecuteUnit) GetAddressInstructionBin() string {
 	return eu.addressInstructionBin
 }
 
-func (eu *ExecuteUnit) GetSourceRegister1Dec() int64{
+func (eu *ExecuteUnit) GetSourceRegister1Dec() int64 {
 	return eu.sourceRegister1Dec
 }
 
-func (eu *ExecuteUnit) GetSourceRegister1Bin() string{
+func (eu *ExecuteUnit) GetSourceRegister1Bin() string {
 	return eu.sourceRegister1Bin
 }
 
-func (eu *ExecuteUnit) GetSourceRegister2Dec() int64{
+func (eu *ExecuteUnit) GetSourceRegister2Dec() int64 {
 	return eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) GetSourceRegister2Bin() string{
+func (eu *ExecuteUnit) GetSourceRegister2Bin() string {
 	return eu.sourceRegister2Bin
 }
 
-func (eu *ExecuteUnit) GetValueInstructionDec() int64{
+func (eu *ExecuteUnit) GetValueInstructionDec() int64 {
 	return eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) GetValueInstructionBin() string{
+func (eu *ExecuteUnit) GetValueInstructionBin() string {
 	return eu.valueInstructionBin
 }
 
-func (eu *ExecuteUnit) GetValueRegisterDec() int64{
+func (eu *ExecuteUnit) GetValueRegisterDec() int64 {
 	return eu.valueRegisterDec
 }
 
-func (eu *ExecuteUnit) GetValueRegisterBin() string{
+func (eu *ExecuteUnit) GetValueRegisterBin() string {
 	return eu.valueRegisterBin
 }
 
-func (eu *ExecuteUnit) GetInstruction() string{
+func (eu *ExecuteUnit) GetInstruction() string {
 	return eu.instruction
 }
 
-func (eu *ExecuteUnit) ConfigForLdr1(){
+func (eu *ExecuteUnit) ConfigForLdr1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 }
 
-
-func (eu *ExecuteUnit) ConfigForLdr2(){
+func (eu *ExecuteUnit) ConfigForLdr2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["address"] = eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForStr1(){
+func (eu *ExecuteUnit) ConfigForStr1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 }
 
-func (eu *ExecuteUnit) ConfigForStr2(){
+func (eu *ExecuteUnit) ConfigForStr2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["address"] = eu.addressInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForAdds1(){
+func (eu *ExecuteUnit) ConfigForAdds1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForAdds2(){
+func (eu *ExecuteUnit) ConfigForAdds2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForSubs1(){
+func (eu *ExecuteUnit) ConfigForSubs1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForSubs2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForAnds1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForAnds2(){
+func (eu *ExecuteUnit) ConfigForSubs2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForMovs1(){
+func (eu *ExecuteUnit) ConfigForAnds1() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForAnds2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForMovs1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["value_register"] = eu.valueRegisterDec
 }
 
-func (eu *ExecuteUnit) ConfigForMovs2(){
+func (eu *ExecuteUnit) ConfigForMovs2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForMuls1(){
+func (eu *ExecuteUnit) ConfigForMuls1() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForMuls2(){
+func (eu *ExecuteUnit) ConfigForMuls2() {
 	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForOrrs1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForOrrs2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForEors1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForEors2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForBics1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForBics2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForAsrs1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForAsrs2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForLsls1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForLsls2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForLsrs1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForLsrs2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForRors1(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForRors2(){
-	eu.config["target_register"] = eu.targetRegisterDec
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForCmp1(){
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["source_register2"] = eu.sourceRegister2Dec
-}
-
-func (eu *ExecuteUnit) ConfigForCmp2(){
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-	eu.config["value"] =  eu.valueInstructionDec
-}
-
-func (eu *ExecuteUnit) ConfigForBeq1(){
-	eu.config["source_register1"] = eu.sourceRegister1Dec
-}
-
-func (eu *ExecuteUnit) ConfigForBeq2(){
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForBne1(){
+func (eu *ExecuteUnit) ConfigForOrrs1() {
+	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForBne2(){
+func (eu *ExecuteUnit) ConfigForOrrs2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForBlt1(){
+func (eu *ExecuteUnit) ConfigForEors1() {
+	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForBlt2(){
+func (eu *ExecuteUnit) ConfigForEors2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForBl1(){
+func (eu *ExecuteUnit) ConfigForBics1() {
+	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForBl2(){
+func (eu *ExecuteUnit) ConfigForBics2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForBx1(){
+func (eu *ExecuteUnit) ConfigForAsrs1() {
+	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
 }
 
-func (eu *ExecuteUnit) ConfigForB1(){
+func (eu *ExecuteUnit) ConfigForAsrs2() {
+	eu.config["target_register"] = eu.targetRegisterDec
 	eu.config["source_register1"] = eu.sourceRegister1Dec
-}
-
-func (eu *ExecuteUnit) ConfigForB2(){
 	eu.config["value"] = eu.valueInstructionDec
 }
 
-func (eu *ExecuteUnit) ConfigForNop(){
+func (eu *ExecuteUnit) ConfigForLsls1() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForLsls2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForLsrs1() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForLsrs2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForRors1() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForRors2() {
+	eu.config["target_register"] = eu.targetRegisterDec
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForCmp1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["source_register2"] = eu.sourceRegister2Dec
+}
+
+func (eu *ExecuteUnit) ConfigForCmp2() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBeq1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBeq2() {
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBne1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBne2() {
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBlt1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBlt2() {
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBl1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForBl2() {
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForBx1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForB1() {
+	eu.config["source_register1"] = eu.sourceRegister1Dec
+}
+
+func (eu *ExecuteUnit) ConfigForB2() {
+	eu.config["value"] = eu.valueInstructionDec
+}
+
+func (eu *ExecuteUnit) ConfigForNop() {
 	eu.config["rest"] = eu.restDec
 }
 
-func (eu *ExecuteUnit) ConfigInstruction(inst string, type_inst string){
+func (eu *ExecuteUnit) ConfigInstruction(inst string, type_inst string) {
 	x := [2]string{inst, type_inst}
 	eu.functionInstructionMap[x]()
 }
 
-func (eu *ExecuteUnit) SetFunctionForConfigFormat(format string, value string){
+func (eu *ExecuteUnit) SetFunctionForConfigFormat(format string, value string) {
 	eu.instructionFormatMap[format](value)
 }

@@ -7,6 +7,7 @@ import (
 	"arm/controller"
 	"arm/interruption"
 	"arm/io"
+	"arm/lifo"
 	"arm/memmory"
 	"arm/programcounter"
 	"arm/registerbank"
@@ -30,6 +31,8 @@ type Program struct {
 
 	deviceList map[string]*io.Device
 
+	lifo *lifo.Lifo
+
 	behaviorInstruction map[[2]string]func()
 }
 
@@ -51,6 +54,8 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 
 	program.deviceList = make(map[string]*io.Device)
 	program.deviceList["standard"] = io.NewDevice("standard", "0x0", "00000000000000000000000000000000")
+
+	program.lifo = lifo.NewLifo()
 
 	program.behaviorInstruction = map[[2]string]func(){
 		// Arithmetic
@@ -93,8 +98,8 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 		{"BLT", "1"}:  program.ExecuteBlt1,
 		{"BLT", "2"}:  program.ExecuteBlt2,
 		//{"BL", "1"}: program.ExecuteBl1,
-		//{"BL", "2"}: program.ExecuteBl2,
-		//{"BX", "1"}: program.ExecuteBx1,
+		{"BL", "2"}: program.ExecuteBl2,
+		{"BX", "1"}: program.ExecuteBx1,
 		//{"BX", "2"}: program.ExecuteBx2,
 		//{"B", "1"}: program.ExecuteB1,
 		//{"B", "2"}: program.ExecuteB2,
@@ -696,6 +701,30 @@ func (p *Program) ExecuteBlt2() {
 			p.pc.SetAddressMemmory(int(address))
 		}
 	}
+}
+
+func (p *Program) ExecuteBl2() {
+	address := p.controller.GetExecuteUnit().GetValueInstructionDec()
+
+	var savecontext *lifo.SystemContext
+	savecontext = lifo.NewSystemContext()
+	savecontext.SetRegisterBank(p.registerBank.GetRegisterBankJson())
+	savecontext.SetDataMemmory(p.ram.GetDataMemmoryJson())
+	savecontext.SetDeviceMemmory(p.deviceMemmory.GetDeviceMemmoryJson())
+
+	p.lifo.Push(savecontext)
+
+	p.pc.SetAddressMemmory(int(address))
+}
+
+func (p *Program) ExecuteBx1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+
+	// Falta restaurar contexto
+
+	p.pc.SetAddressMemmory(int(value_reg1))
 }
 
 //-----------------------------------------------------------------------------------

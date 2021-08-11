@@ -1,4 +1,4 @@
-package Lifo
+package lifo
 
 import (
 	"arm/memmory"
