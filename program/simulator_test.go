@@ -1,13 +1,13 @@
 package program
 
-import(
+import (
+	"arm/controller"
 	"arm/memmory"
 	"arm/registerbank"
-	"arm/controller"
 
+	"encoding/json"
 	"strconv"
 	"testing"
-	"encoding/json"
 	//"fmt"
 )
 
@@ -17,85 +17,86 @@ var st Step
 // ---------------------------------------------------------------------------------------
 // Tests about steps
 // ---------------------------------------------------------------------------------------
-func TestSetStepOnStep(t *testing.T){
+func TestSetStepOnStep(t *testing.T) {
 	want := "1"
 	st.SetStepOnStep("1")
-	got := st.step 
+	got := st.step
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetStepOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestSetCodeMemmoryOnStep(t *testing.T){
+func TestSetCodeMemmoryOnStep(t *testing.T) {
 	want := "teste"
 	st.SetCodeMemmoryOnStep("teste")
 	got := st.code_memmory
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetCodeMemmoryOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestSetDataMemmoryOnStep(t *testing.T){
+func TestSetDataMemmoryOnStep(t *testing.T) {
 	want := "teste"
 	st.SetDataMemmoryOnStep("teste")
 	got := st.data_memmory
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetDataMemmoryOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestSetDeviceMemmoryOnStep(t *testing.T){
+func TestSetDeviceMemmoryOnStep(t *testing.T) {
 	want := "teste"
 	st.SetDeviceMemmoryOnStep("teste")
 	got := st.device_memmory
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetDeviceMemmoryOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestSetRegisterBankOnStep(t *testing.T){
+func TestSetRegisterBankOnStep(t *testing.T) {
 	want := "teste"
 	st.SetRegisterBankOnStep("teste")
 	got := st.register_bank
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetRegisterBankOnStep \n got: %v \n want %v \n", got, want)
 	}
 }
+
 // ---------------------------------------------------------------------------------------
 // Tests about simulation
 // ---------------------------------------------------------------------------------------
 
-func TestSetMaxStepSize(t *testing.T){
+func TestSetMaxStepSize(t *testing.T) {
 	want := 2000
 	sim.SetMaxStepSize(2000)
 	got := sim.max_step_size
 
-	if want != got{
+	if want != got {
 		t.Errorf("SetMaxStepSize \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestGetMaxStepSize(t *testing.T){
+func TestGetMaxStepSize(t *testing.T) {
 	want := 2000
 	sim.max_step_size = 2000
 	got := sim.GetMaxStepSize()
 
-	if want != got{
+	if want != got {
 		t.Errorf("GetMaxStepSize \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestGetStepJson(t *testing.T){
+func TestGetStepJson(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 	}
 	pr := NewProgram(rom_teste)
 	sim := NewSimulation(pr)
@@ -105,15 +106,15 @@ func TestGetStepJson(t *testing.T){
 	register_bank := registerbank.NewRegisterBank()
 
 	str_step1 := map[string]string{
-		"step": "2",
-		"code_memmory": rom_teste.GetCodeMemmoryJson(),
-		"data_memmory": data_memmory.GetDataMemmoryJson(),
-		"device_memmory": device_memmory.GetDeviceMemmoryJson(),
-		"register_bank": register_bank.GetRegisterBankJson(),
-		"current_instruction_fetch": "10010001010101011010100001011010",
-		"current_instruction_decode": "00110010000101011010100001011010",
+		"step":                        "2",
+		"code_memmory":                rom_teste.GetCodeMemmoryJson(),
+		"data_memmory":                data_memmory.GetDataMemmoryJson(),
+		"device_memmory":              device_memmory.GetDeviceMemmoryJson(),
+		"register_bank":               register_bank.GetRegisterBankJson(),
+		"current_instruction_fetch":   "10010001010101011010100001011010",
+		"current_instruction_decode":  "00110010000101011010100001011010",
 		"current_instruction_execute": "10110110101001001110100001011010",
-		"current_address_fetch": "0x2"}
+		"current_address_fetch":       "0x2"}
 
 	jstep, _ := json.MarshalIndent(str_step1, "", "")
 
@@ -132,18 +133,18 @@ func TestGetStepJson(t *testing.T){
 
 	got := sim.GetStepJson(2)
 
-	if got != want{
+	if got != want {
 		t.Errorf("GetStepJson \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestRegisterBankRunProgram(t *testing.T){
+func TestRegisterBankRunProgram(t *testing.T) {
 
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 		rom_teste.AddAliasMemmoryField(addressMemmoryCode, "Program Area")
 	}
 
@@ -158,11 +159,17 @@ func TestRegisterBankRunProgram(t *testing.T){
 		2: {"R4", "78"},
 		3: {"R7", "62"}}
 
+	register_bank.GetRegisterBank()["R13"].SetRegisterName("SP")
+	register_bank.GetRegisterBank()["R14"].SetRegisterName("LR")
+	register_bank.GetRegisterBank()["R15"].SetRegisterName("PC")
+	register_bank.GetRegisterBank()["R16"].SetRegisterName("PSR")
+	register_bank.ChangeRegister("R16", 0)
+
 	var register_bank_value int
-	for count := (4 * 1024); count < ((4 * 1024) + 10); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + 10); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
 
-		if regbank_value, ok := register_bank_values[count - (4 * 1024)]; ok {
+		if regbank_value, ok := register_bank_values[count-(4*1024)]; ok {
 			register_bank_value, _ = strconv.Atoi(regbank_value[1])
 			register_bank.ChangeRegister(regbank_value[0], register_bank_value)
 		}
@@ -173,17 +180,17 @@ func TestRegisterBankRunProgram(t *testing.T){
 	sim.Simulation()
 	got := sim.prog.GetRegisterBank().GetRegisterBankJson()
 
-	if got != want{
-		t.Errorf("RegisterBankRunProgram \n got: %v \n want %v \n", len(got), len(want))
+	if got != want {
+		t.Errorf("RegisterBankRunProgram \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestCodeMemmoryRunProgram(t *testing.T){
+func TestCodeMemmoryRunProgram(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 		rom_teste.AddAliasMemmoryField(addressMemmoryCode, "Program Area")
 	}
 
@@ -194,17 +201,17 @@ func TestCodeMemmoryRunProgram(t *testing.T){
 	sim.Simulation()
 	got := sim.prog.GetCodeMemmory().GetCodeMemmoryJson()
 
-	if got != want{
+	if got != want {
 		t.Errorf("CodeMemmoryRunProgram \n got: %v \n want %v \n", len(got), len(want))
 	}
 }
 
-func TestDataMemmoryRunPorgram(t *testing.T){
+func TestDataMemmoryRunPorgram(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 		rom_teste.AddAliasMemmoryField(addressMemmoryCode, "Program Area")
 	}
 
@@ -218,10 +225,10 @@ func TestDataMemmoryRunPorgram(t *testing.T){
 		6: {"0x2", "62"}}
 
 	var data_memmory_value int
-	for count := (4 * 1024); count < ((4 * 1024) + 10); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + 10); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
 
-		if dtmem_value, ok := data_memmory_values[count - (4 * 1024)]; ok {
+		if dtmem_value, ok := data_memmory_values[count-(4*1024)]; ok {
 			data_memmory_value, _ = strconv.Atoi(dtmem_value[1])
 			data_memmory.ChangeField(dtmem_value[0], data_memmory_value)
 		}
@@ -232,17 +239,17 @@ func TestDataMemmoryRunPorgram(t *testing.T){
 	sim.Simulation()
 	got := sim.prog.GetDataMemmory().GetDataMemmoryJson()
 
-	if got != want{
+	if got != want {
 		t.Errorf("DataMemmoryRunPorgram \n got: %v \n want %v \n", len(got), len(want))
 	}
 }
 
-func TestDeviceMemmoryRunPorgram(t *testing.T){
+func TestDeviceMemmoryRunPorgram(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 		rom_teste.AddAliasMemmoryField(addressMemmoryCode, "Program Area")
 	}
 
@@ -255,17 +262,17 @@ func TestDeviceMemmoryRunPorgram(t *testing.T){
 	sim.Simulation()
 	got := sim.prog.GetDeviceMemmory().GetDeviceMemmoryJson()
 
-	if got != want{
+	if got != want {
 		t.Errorf("DeviceMemmoryRunPorgram \n got: %v \n want %v \n", len(got), len(want))
 	}
 }
 
-func TestRunProgram(t *testing.T){
+func TestRunProgram(t *testing.T) {
 	rom_teste := memmory.NewCodeMemmory()
 	var addressMemmoryCode string
-	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + len(test_program)); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
-		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count - (4 * 1024)])
+		rom_teste.AddInstructionField(addressMemmoryCode, test_program[count-(4*1024)])
 		rom_teste.AddAliasMemmoryField(addressMemmoryCode, "Program Area")
 	}
 	pr := NewProgram(rom_teste)
@@ -286,6 +293,14 @@ func TestRunProgram(t *testing.T){
 		2: {"R4", "78"},
 		3: {"R7", "62"}}
 
+	psr_values := map[int]int{
+		0: 0,
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0}
+
 	instruction_values := map[int][3]string{
 		0: {"11010000101000000010001100000000", "11010000101000000010001100000000", "11010000101000000010001100000000"},
 		1: {"11010000001000000000010000000000", "11010000001000000000010000000000", "11010000001000000000010000000000"},
@@ -296,46 +311,56 @@ func TestRunProgram(t *testing.T){
 
 	step_program := make(map[int]string)
 
+	register_bank.GetRegisterBank()["R13"].SetRegisterName("SP")
+	register_bank.GetRegisterBank()["R14"].SetRegisterName("LR")
+	register_bank.GetRegisterBank()["R15"].SetRegisterName("PC")
+	register_bank.GetRegisterBank()["R16"].SetRegisterName("PSR")
+	register_bank.ChangeRegister("R16", 0)
+
 	var data_memmory_value int
 	var register_bank_value int
 	// Build code memmory for each step
-	for count := (4 * 1024); count < ((4 * 1024) + 10); count++{
+	for count := (4 * 1024); count < ((4 * 1024) + 10); count++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(count), 16)
 
-		if dtmem_value, ok := data_memmory_values[count - (4 * 1024)]; ok {
+		if dtmem_value, ok := data_memmory_values[count-(4*1024)]; ok {
 			data_memmory_value, _ = strconv.Atoi(dtmem_value[1])
 			data_memmory.ChangeField(dtmem_value[0], data_memmory_value)
 		}
 
-		if regbank_value, ok := register_bank_values[count - (4 * 1024)]; ok {
+		if regbank_value, ok := register_bank_values[count-(4*1024)]; ok {
 			register_bank_value, _ = strconv.Atoi(regbank_value[1])
 			register_bank.ChangeRegister(regbank_value[0], register_bank_value)
 		}
 
-		if instruction_value, ok := instruction_values[count - (4 * 1024)]; ok {
+		if psr_value, ok := psr_values[count-(4*1024)]; ok {
+			register_bank.ChangeRegister("R16", psr_value)
+		}
+
+		if instruction_value, ok := instruction_values[count-(4*1024)]; ok {
 			controller.ChangeInstructionFetch(instruction_value[0])
 			controller.ChangeInstructionDecode(instruction_value[1])
 			controller.ChangeInstructionExecute(instruction_value[2])
-		} else{
+		} else {
 			controller.ChangeInstructionFetch("00000000000000000000000000000000")
 			controller.ChangeInstructionDecode("00000000000000000000000000000000")
 			controller.ChangeInstructionExecute("00000000000000000000000000000000")
 		}
 
 		str_steps := map[string]string{
-			"step": strconv.FormatInt(int64(count - (4 * 1024)), 10),
-			"code_memmory": rom_teste.GetCodeMemmoryJson(),
-			"data_memmory": data_memmory.GetDataMemmoryJson(),
-			"device_memmory": device_memmory.GetDeviceMemmoryJson(),
-			"register_bank": register_bank.GetRegisterBankJson(),
-			"current_instruction_fetch": controller.GetFetchUnit().GetInstruction(),
-			"current_instruction_decode": controller.GetDecodeUnit().GetInstruction(),
+			"step":                        strconv.FormatInt(int64(count-(4*1024)), 10),
+			"code_memmory":                rom_teste.GetCodeMemmoryJson(),
+			"data_memmory":                data_memmory.GetDataMemmoryJson(),
+			"device_memmory":              device_memmory.GetDeviceMemmoryJson(),
+			"register_bank":               register_bank.GetRegisterBankJson(),
+			"current_instruction_fetch":   controller.GetFetchUnit().GetInstruction(),
+			"current_instruction_decode":  controller.GetDecodeUnit().GetInstruction(),
 			"current_instruction_execute": controller.GetExecuteUnit().GetInstruction(),
-			"current_address_fetch": addressMemmoryCode}
+			"current_address_fetch":       addressMemmoryCode}
 
 		jstep, _ := json.MarshalIndent(str_steps, "", "")
 
-		step_program[count - (4 * 1024)] = string(jstep)
+		step_program[count-(4*1024)] = string(jstep)
 	}
 
 	jprogram, _ := json.MarshalIndent(step_program, "", "")
@@ -345,8 +370,8 @@ func TestRunProgram(t *testing.T){
 	sim.Simulation()
 	got := sim.GetJsonSimulation()
 
-	if want != got{
+	if want != got {
 		t.Errorf("GetJsonSimulation \n got: %v \n want %v \n", len(got), len(want))
 	}
-	
+
 }

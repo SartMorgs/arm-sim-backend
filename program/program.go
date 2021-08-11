@@ -7,6 +7,7 @@ import (
 	"arm/controller"
 	"arm/interruption"
 	"arm/io"
+	"arm/lifo"
 	"arm/memmory"
 	"arm/programcounter"
 	"arm/registerbank"
@@ -30,6 +31,8 @@ type Program struct {
 
 	deviceList map[string]*io.Device
 
+	lifo *lifo.Lifo
+
 	behaviorInstruction map[[2]string]func()
 }
 
@@ -51,6 +54,8 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 
 	program.deviceList = make(map[string]*io.Device)
 	program.deviceList["standard"] = io.NewDevice("standard", "0x0", "00000000000000000000000000000000")
+
+	program.lifo = lifo.NewLifo()
 
 	program.behaviorInstruction = map[[2]string]func(){
 		// Arithmetic
@@ -78,23 +83,23 @@ func NewProgram(rom *memmory.CodeMemmory) *Program {
 		{"RORS", "2"}: program.ExecuteRors2,
 
 		// Comparison
-		//{"CMN", "1"}: program.ExecuteCmn1,
-		//{"CMN", "2"}: program.ExecuteCms2,
-		//{"CMP", "1"}: program.ExecuteCmp1,
-		//{"CMP", "2"}: program.ExecuteCmp2,
+		{"CMN", "1"}: program.ExecuteCmn1,
+		{"CMN", "2"}: program.ExecuteCmn2,
+		{"CMP", "1"}: program.ExecuteCmp1,
+		{"CMP", "2"}: program.ExecuteCmp2,
 
 		// Bypass
-		//{"MOVS", "1"}: program.ExecuteMovs1,
-		//{"MOVS", "2"}: program.ExecuteMovs2,
-		//{"BEQ", "1"}: program.ExecuteBeq1,
-		//{"BEQ", "2"}: program.ExecuteBeq2,
-		//{"BNE", "1"}: program.ExecuteBne1,
-		//{"BNE", "2"}: program.ExecuteBne2,
-		//{"BLT", "1"}: program.ExecuteBlt1,
-		//{"BLT", "2"}: program.ExecuteBlt2,
+		{"MOVS", "1"}: program.ExecuteMovs1,
+		{"MOVS", "2"}: program.ExecuteMovs2,
+		{"BEQ", "1"}:  program.ExecuteBeq1,
+		{"BEQ", "2"}:  program.ExecuteBeq2,
+		{"BNE", "1"}:  program.ExecuteBne1,
+		{"BNE", "2"}:  program.ExecuteBne2,
+		{"BLT", "1"}:  program.ExecuteBlt1,
+		{"BLT", "2"}:  program.ExecuteBlt2,
 		//{"BL", "1"}: program.ExecuteBl1,
-		//{"BL", "2"}: program.ExecuteBl2,
-		//{"BX", "1"}: program.ExecuteBx1,
+		{"BL", "2"}: program.ExecuteBl2,
+		{"BX", "1"}: program.ExecuteBx1,
 		//{"BX", "2"}: program.ExecuteBx2,
 		//{"B", "1"}: program.ExecuteB1,
 		//{"B", "2"}: program.ExecuteB2,
@@ -117,6 +122,7 @@ func (p *Program) initialConfigurations() {
 	p.registerBank.GetRegisterBank()["R14"].SetRegisterName("LR")
 	p.registerBank.GetRegisterBank()["R15"].SetRegisterName("PC")
 	p.registerBank.GetRegisterBank()["R16"].SetRegisterName("PSR")
+	p.registerBank.ChangeRegister("R16", 0)
 }
 
 func (p *Program) setPSRRegister() {
@@ -172,23 +178,9 @@ func (p *Program) GetDevice(name string) *io.Device {
 	return p.deviceList[name]
 }
 
-func (p *Program) ExecuteLdr1() {
-	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
-	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
-	target_register_r := "R" + strconv.Itoa(int(target_register))
-	source_register1_r := "R" + strconv.Itoa(int(source_register1))
-	memmory_addr := p.registerBank.GetRegisterBank()[source_register1_r].GetHexValue()
-	value := p.ram.GetDataMemmoryList()[memmory_addr].GetDecValue()
-	p.registerBank.ChangeRegister(target_register_r, value)
-}
-
-func (p *Program) ExecuteLdr2() {
-	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
-	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
-	target_register_r := "R" + strconv.Itoa(int(target_register))
-	p.registerBank.ChangeRegister(target_register_r, int(address))
-}
-
+//-----------------------------------------------------------------------------------
+// Arithmetic
+//-----------------------------------------------------------------------------------
 func (p *Program) ExecuteAdds1() {
 	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
 	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
@@ -202,6 +194,8 @@ func (p *Program) ExecuteAdds1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Add()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteAdds2() {
@@ -215,6 +209,8 @@ func (p *Program) ExecuteAdds2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Add()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteSubs1() {
@@ -230,6 +226,8 @@ func (p *Program) ExecuteSubs1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Sub()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteSubs2() {
@@ -243,6 +241,8 @@ func (p *Program) ExecuteSubs2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Sub()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteMuls1() {
@@ -258,6 +258,8 @@ func (p *Program) ExecuteMuls1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Mult()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteMuls2() {
@@ -271,6 +273,8 @@ func (p *Program) ExecuteMuls2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Mult()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteAnds1() {
@@ -286,6 +290,8 @@ func (p *Program) ExecuteAnds1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.And()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteAnds2() {
@@ -299,6 +305,8 @@ func (p *Program) ExecuteAnds2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.And()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteOrrs1() {
@@ -314,6 +322,8 @@ func (p *Program) ExecuteOrrs1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Or()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteOrrs2() {
@@ -327,6 +337,8 @@ func (p *Program) ExecuteOrrs2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Or()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteEors1() {
@@ -342,6 +354,8 @@ func (p *Program) ExecuteEors1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Eor()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteEors2() {
@@ -355,6 +369,8 @@ func (p *Program) ExecuteEors2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Eor()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteBics1() {
@@ -370,6 +386,8 @@ func (p *Program) ExecuteBics1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Bic()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteBics2() {
@@ -383,6 +401,8 @@ func (p *Program) ExecuteBics2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Bic()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteAsrs1() {
@@ -398,6 +418,8 @@ func (p *Program) ExecuteAsrs1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Asr()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteAsrs2() {
@@ -411,6 +433,8 @@ func (p *Program) ExecuteAsrs2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Asr()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteLsls1() {
@@ -426,6 +450,8 @@ func (p *Program) ExecuteLsls1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Lsl()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteLsls2() {
@@ -439,6 +465,8 @@ func (p *Program) ExecuteLsls2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Lsl()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteLsrs1() {
@@ -454,6 +482,8 @@ func (p *Program) ExecuteLsrs1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Lsr()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteLsrs2() {
@@ -467,6 +497,8 @@ func (p *Program) ExecuteLsrs2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Lsr()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteRors1() {
@@ -482,6 +514,8 @@ func (p *Program) ExecuteRors1() {
 	p.ula.SetValue2(value_reg2)
 	result := p.ula.Ror()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
 }
 
 func (p *Program) ExecuteRors2() {
@@ -495,6 +529,222 @@ func (p *Program) ExecuteRors2() {
 	p.ula.SetValue2(int(data))
 	result := p.ula.Ror()
 	p.registerBank.ChangeRegister(target_register_r, result)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+//-----------------------------------------------------------------------------------
+// Comparison
+//-----------------------------------------------------------------------------------
+func (p *Program) ExecuteCmn1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	p.ula.Cmn()
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+func (p *Program) ExecuteCmn2() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	p.ula.Cmn()
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+func (p *Program) ExecuteCmp1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register2 := p.controller.GetExecuteUnit().GetSourceRegister2Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	source_register2_r := "R" + strconv.Itoa(int(source_register2))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg2 := p.registerBank.GetRegisterBank()[source_register2_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(value_reg2)
+	p.ula.Cmp()
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+func (p *Program) ExecuteCmp2() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.ula.SetValue1(value_reg1)
+	p.ula.SetValue2(int(data))
+	p.ula.Cmp()
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+//-----------------------------------------------------------------------------------
+// Bypass
+//-----------------------------------------------------------------------------------
+func (p *Program) ExecuteMovs1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	p.registerBank.ChangeRegister(target_register_r, value_reg1)
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+func (p *Program) ExecuteMovs2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	data := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	p.registerBank.ChangeRegister(target_register_r, int(data))
+	p.ula.AllResultFlag()
+	p.setPSRRegister()
+}
+
+func (p *Program) ExecuteBeq1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) == 31 {
+		if value_reg_psr_bin[0] == '1' {
+			p.pc.SetAddressMemmory(value_reg1)
+		}
+	} else if len(value_reg_psr_bin) > 31 {
+		if value_reg_psr_bin[1] == '1' {
+			p.pc.SetAddressMemmory(value_reg1)
+		}
+	}
+}
+
+func (p *Program) ExecuteBeq2() {
+	address := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) == 31 {
+		if value_reg_psr_bin[0] == '1' {
+			p.pc.SetAddressMemmory(int(address))
+		}
+	} else if len(value_reg_psr_bin) > 31 {
+		if value_reg_psr_bin[1] == '1' {
+			p.pc.SetAddressMemmory(int(address))
+		}
+	}
+}
+
+func (p *Program) ExecuteBne1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) > 31 {
+		if value_reg_psr_bin[1] == '0' {
+			p.pc.SetAddressMemmory(value_reg1)
+		}
+	} else {
+		p.pc.SetAddressMemmory(value_reg1)
+	}
+}
+
+func (p *Program) ExecuteBne2() {
+	address := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) > 31 {
+		if value_reg_psr_bin[1] == '0' {
+			p.pc.SetAddressMemmory(int(address))
+		}
+	} else {
+		p.pc.SetAddressMemmory(int(address))
+	}
+}
+
+func (p *Program) ExecuteBlt1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) == 32 {
+		if value_reg_psr_bin[0] != value_reg_psr_bin[3] {
+			p.pc.SetAddressMemmory(value_reg1)
+		}
+	} else if len(value_reg_psr_bin) == 29 {
+		if value_reg_psr_bin[0] == '1' {
+			p.pc.SetAddressMemmory(value_reg1)
+		}
+	}
+}
+
+func (p *Program) ExecuteBlt2() {
+	address := p.controller.GetExecuteUnit().GetValueInstructionDec()
+	value_reg_psr_bin := p.registerBank.GetRegisterBank()["R16"].GetBinValue()
+
+	if len(value_reg_psr_bin) == 32 {
+		if value_reg_psr_bin[0] != value_reg_psr_bin[3] {
+			p.pc.SetAddressMemmory(int(address))
+		}
+	} else if len(value_reg_psr_bin) == 29 {
+		if value_reg_psr_bin[0] == '1' {
+			p.pc.SetAddressMemmory(int(address))
+		}
+	}
+}
+
+func (p *Program) ExecuteBl2() {
+	address := p.controller.GetExecuteUnit().GetValueInstructionDec()
+
+	var savecontext *lifo.SystemContext
+	savecontext = lifo.NewSystemContext()
+	savecontext.SetRegisterBank(p.registerBank.GetRegisterBankJson())
+	savecontext.SetDataMemmory(p.ram.GetDataMemmoryJson())
+	savecontext.SetDeviceMemmory(p.deviceMemmory.GetDeviceMemmoryJson())
+
+	p.lifo.Push(savecontext)
+
+	p.pc.SetAddressMemmory(int(address))
+}
+
+func (p *Program) ExecuteBx1() {
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	value_reg1 := p.registerBank.GetRegisterBank()[source_register1_r].GetDecValue()
+
+	// Falta restaurar contexto
+
+	p.pc.SetAddressMemmory(int(value_reg1))
+}
+
+//-----------------------------------------------------------------------------------
+// Load and Store
+//-----------------------------------------------------------------------------------
+func (p *Program) ExecuteLdr1() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	source_register1 := p.controller.GetExecuteUnit().GetSourceRegister1Dec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	source_register1_r := "R" + strconv.Itoa(int(source_register1))
+	memmory_addr := p.registerBank.GetRegisterBank()[source_register1_r].GetHexValue()
+	value := p.ram.GetDataMemmoryList()[memmory_addr].GetDecValue()
+	p.registerBank.ChangeRegister(target_register_r, value)
+}
+
+func (p *Program) ExecuteLdr2() {
+	target_register := p.controller.GetExecuteUnit().GetTargetRegisterDec()
+	address := p.controller.GetExecuteUnit().GetAddressInstructionDec()
+	target_register_r := "R" + strconv.Itoa(int(target_register))
+	p.registerBank.ChangeRegister(target_register_r, int(address))
 }
 
 func (p *Program) ExecuteStr1() {

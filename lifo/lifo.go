@@ -1,4 +1,4 @@
-package Lifo
+package lifo
 
 type SystemContext struct {
 	registerBank string
@@ -50,6 +50,10 @@ func (sc *SystemContext) SetDeviceMemmory(devicemem string) {
 
 func (sc *SystemContext) GetDeviceMemmory() string {
 	return sc.deviceMem
+}
+
+func (lf *Lifo) GetLifo() []*SystemContext {
+	return lf.lifo
 }
 
 func (lf *Lifo) IsEmpty() bool {

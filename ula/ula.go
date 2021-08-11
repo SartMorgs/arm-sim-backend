@@ -120,7 +120,7 @@ func (u *Ula) Cmp() {
 }
 
 func (u *Ula) Cmn() {
-	u.result = u.value1 + u.value2
+	u.result = u.value1 - u.value2
 }
 
 func (u *Ula) negativeResult() {
