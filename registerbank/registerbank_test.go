@@ -85,6 +85,9 @@ func TestSetPSRRegisterAlias(t *testing.T) {
 	}
 }
 
+//-----------------------------------------------------------------------------------
+// Json
+//-----------------------------------------------------------------------------------
 func TestGetRegisterBankJson(t *testing.T) {
 	rgbk := NewRegisterBank()
 	test := NewRegisterBank()
@@ -108,6 +111,40 @@ func TestGetRegisterBankJson(t *testing.T) {
 
 	jregister_bank, _ := json.MarshalIndent(register_bank, "", "")
 	want := string(jregister_bank)
+	got := rgbk.GetRegisterBankJson()
+
+	if got != want {
+		t.Errorf("GetRegisterBankJson \n got: %v \n want %v \n", got, want)
+	}
+}
+
+func TestRestoreRegisterBank(t *testing.T) {
+	rgbk := NewRegisterBank()
+	test := NewRegisterBank()
+
+	test.ChangeRegister("R1", 12)
+	test.ChangeRegister("R2", 4)
+
+	register_bank := make(map[string]string)
+
+	var registerCode string
+	for count := 0; count < 17; count++ {
+		registerCode = "R" + strconv.Itoa(count)
+		str_register_bank := map[string]string{
+			"decimal_value":     strconv.FormatInt(int64(test.GetRegisterBank()[registerCode].GetDecValue()), 10),
+			"hexadecimal_value": test.GetRegisterBank()[registerCode].GetHexValue(),
+			"binary_value":      test.GetRegisterBank()[registerCode].GetBinValue(),
+			"register_name":     test.GetRegisterBank()[registerCode].GetRegisterName(),
+			"register_function": test.GetRegisterBank()[registerCode].GetRegisterFunction()}
+
+		jrbank, _ := json.MarshalIndent(str_register_bank, "", "")
+
+		register_bank[registerCode] = string(jrbank)
+	}
+
+	jregister_bank, _ := json.MarshalIndent(register_bank, "", "")
+	want := string(jregister_bank)
+	rgbk.Restore(string(jregister_bank))
 	got := rgbk.GetRegisterBankJson()
 
 	if got != want {
