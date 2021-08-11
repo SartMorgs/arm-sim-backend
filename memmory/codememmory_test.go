@@ -1,68 +1,68 @@
 package memmory
 
-import(
-	"testing"
-	"strconv"
-	"reflect"
+import (
 	"encoding/json"
+	"reflect"
+	"strconv"
+	"testing"
 )
 
 var cmm CodeMemmory
 
 // Unit Tests
 // Test all methods using mock
-func TestAddAliasMemmoryField(t *testing.T){
+func TestAddAliasMemmoryField(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	want := "Area-A"
 	cmm.AddAliasMemmoryField("0x55", "Area-A")
 	got := cmm.romList["0x55"].GetAliasField()
 
-	if got != want{
+	if got != want {
 		t.Errorf("AddAliasMemmoryField \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestAddInstructionField(t *testing.T){
+func TestAddInstructionField(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	want := "10001101010100001010100001011010"
 	cmm.AddInstructionField("0x55", "10001101010100001010100001011010")
-	got:= cmm.romList["0x55"].GetFullBinValue()
+	got := cmm.romList["0x55"].GetFullBinValue()
 
-	if got != want{
+	if got != want {
 		t.Errorf("AddInstructionField \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestGetInterruptionAlias(t *testing.T){
+func TestGetInterruptionAlias(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	want := "Int3"
 	got := cmm.romList["0x2f8"].GetAliasField()
 
-	if got != want{
+	if got != want {
 		t.Errorf("GetInterruptionAlias \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestResetCodeMemmory(t *testing.T){
+func TestResetCodeMemmory(t *testing.T) {
 	cmm := NewCodeMemmory()
 
-	for count := 0; count < (12 * 1024); count++{
-		cmm.AddInstructionField("0x" + strconv.FormatInt(int64(count), 16), "00000000000000000000000000000000")
+	for count := 0; count < (12 * 1024); count++ {
+		cmm.AddInstructionField("0x"+strconv.FormatInt(int64(count), 16), "00000000000000000000000000000000")
 	}
 
 	cmm.ResetCodeMemmory()
 	want := "00000000000000000000000000000000"
 	got := cmm.romList["0x55"].GetFullBinValue()
 
-	if got != want{
+	if got != want {
 		t.Errorf("ResetCodeMemmory \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestSetInputCode(t *testing.T){
+func TestSetInputCode(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_input := `{
@@ -92,13 +92,12 @@ func TestSetInputCode(t *testing.T){
 
 	got := cmm.inputCode
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("SetInputCode \n got: %v \n want %v \n", got, want)
 	}
 }
 
-
-func TestBuildFunctionMap(t *testing.T){
+func TestBuildFunctionMap(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_input := `{
@@ -148,14 +147,14 @@ func TestBuildFunctionMap(t *testing.T){
 	cmm.SetInputCode(code_json)
 	cmm.BuildFunctionMap()
 
-	got := cmm.functionMap 
+	got := cmm.functionMap
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("BuildFunctionMap \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestGetInputCode(t *testing.T){
+func TestGetInputCode(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_input := `{
@@ -183,12 +182,12 @@ func TestGetInputCode(t *testing.T){
 	cmm.inputCode = code_json
 	got := cmm.GetInputCode()
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("GetInputCode \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestFixFunctionAddressIntoMainCode(t *testing.T){
+func TestFixFunctionAddressIntoMainCode(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_input := `{
@@ -239,12 +238,12 @@ func TestFixFunctionAddressIntoMainCode(t *testing.T){
 	cmm.FixFunctionAddressIntoMainCode()
 	got := cmm.inputCode
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("FixFunctionAddressIntoMainCode \n got: %v \n want %v \n", got, want)
-	} 
+	}
 }
 
-func TestBuildCodeMemmory(t *testing.T){
+func TestBuildCodeMemmory(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	var test_program []string = []string{
@@ -288,34 +287,34 @@ func TestBuildCodeMemmory(t *testing.T){
 	cmm.AddCodeIntoMemmory()
 
 	cmm_want := NewCodeMemmory()
-	
+
 	var addressMemmoryCode string
-	for iterator := 0; iterator < len(test_interruption); iterator++{
+	for iterator := 0; iterator < len(test_interruption); iterator++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
 		cmm_want.AddInstructionField(addressMemmoryCode, test_interruption[iterator])
 	}
 
 	start_address_main := (4 * 1024)
-	for iterator := start_address_main; iterator < (start_address_main + len(test_program)); iterator++{
+	for iterator := start_address_main; iterator < (start_address_main + len(test_program)); iterator++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
-		cmm_want.AddInstructionField(addressMemmoryCode, test_program[iterator - start_address_main])
+		cmm_want.AddInstructionField(addressMemmoryCode, test_program[iterator-start_address_main])
 	}
 
 	start_address_function := start_address_main + len(test_program)
-	for iterator := start_address_function; iterator < (start_address_function + len(test_function)); iterator++{
+	for iterator := start_address_function; iterator < (start_address_function + len(test_function)); iterator++ {
 		addressMemmoryCode = "0x" + strconv.FormatInt(int64(iterator), 16)
-		cmm_want.AddInstructionField(addressMemmoryCode, test_function[iterator - start_address_function])
+		cmm_want.AddInstructionField(addressMemmoryCode, test_function[iterator-start_address_function])
 	}
 
 	want := cmm.GetCodeMemmoryJson()
 	got := cmm_want.GetCodeMemmoryJson()
 
-	if got != want{
+	if got != want {
 		t.Errorf("BuildCodeMemmory \n got: \n want \n")
 	}
 }
 
-func TestSetDirectiveCode(t *testing.T){
+func TestSetDirectiveCode(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_directive := `{
@@ -340,12 +339,12 @@ func TestSetDirectiveCode(t *testing.T){
 
 	got := cmm.directiveCode
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("SetDirectiveCode \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestGetDirectiveCode(t *testing.T){
+func TestGetDirectiveCode(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_directive := `{
@@ -370,12 +369,12 @@ func TestGetDirectiveCode(t *testing.T){
 
 	got := cmm.GetDirectiveCode()
 
-	if !reflect.DeepEqual(want, got){
+	if !reflect.DeepEqual(want, got) {
 		t.Errorf("SetDirectiveCode \n got: %v \n want %v \n", got, want)
 	}
 }
 
-func TestAddDirectivesAliasIntoMemmory(t *testing.T){
+func TestAddDirectivesAliasIntoMemmory(t *testing.T) {
 	cmm := NewCodeMemmory()
 
 	json_directive := `{
@@ -405,7 +404,7 @@ func TestAddDirectivesAliasIntoMemmory(t *testing.T){
 	got := cmm.GetCodeMemmoryJson()
 	want := cmm_want.GetCodeMemmoryJson()
 
-	if got != want{
+	if got != want {
 		t.Errorf("AddDirectivesAliasIntoMemmory \n got: \n want \n")
 	}
 }
